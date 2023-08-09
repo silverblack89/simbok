@@ -32,6 +32,7 @@ class Activitydatasub extends \yii\db\ActiveRecord
             [['tahun'], 'safe'],
             [['keterangan'], 'string'],
             [['nama'], 'string', 'max' => 100],
+            [['aktif'], 'integer']
         ];
     }
 

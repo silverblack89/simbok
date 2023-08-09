@@ -126,7 +126,7 @@ class ActivitydataController extends Controller
 
             foreach($cekPoa as $cekPoa){
                 if($cekPoa['jumlah'] > $cekPoa['pagu'] && $cekPoa['pagu'] > 0){
-                    // Yii::$app->session->setFlash('error', 'PERHATIAN!, Total Entri POA melebihi Pagu BOK.');
+                    Yii::$app->session->setFlash('error', 'PERHATIAN!, Total Entri POA melebihi Pagu BOK.');
                 }
             }
 
@@ -232,7 +232,80 @@ class ActivitydataController extends Controller
                     Yii::$app->session->setFlash('error', 'PERHATIAN!, Total Entri POA Perubahan melebihi Pagu Perubahan.');
                 }
             }
-        }                                            
+        }  
+        
+        if($session['poa'] == 'def'){
+            $progress = Yii::$app->db->createCommand('SELECT p.unit_id, u.puskesmas, IFNULL(p.pagu,0) pagu, sum(IFNULL(e.jumlah,0)) jumlah, SUBSTRING(IFNULL(cast(sum(IFNULL(e.jumlah,0))/IFNULL(p.pagu,0)*100 as char),0),1,5) prosentase
+            FROM activity_detail e
+            LEFT JOIN activity_data a ON a.id=e.activity_data_id
+            LEFT JOIN activity v ON v.id=a.activity_id
+            LEFT JOIN service s ON s.id=v.service_id
+            LEFT JOIN period p ON p.id=a.period_id
+            LEFT JOIN unit u ON u.id=p.unit_id
+            WHERE p.tahun=:periode AND p.unit_id=:unit
+            GROUP BY p.unit_id, p.pagu
+            ORDER BY u.puskesmas')
+            ->bindValue(':periode', $session['periodValue'])
+            ->bindValue(':unit', Yii::$app->user->identity->unit_id)
+            ->queryAll();
+
+            foreach($progress as $progress);
+
+            $session = Yii::$app->session;
+
+            if(!empty($progress)){
+                // $session['pagu'] = $progress['pagu'];
+                $session['pagu'] = $progress['pagu']-$progress['jumlah'];
+            }
+        }else{
+            $progress = Yii::$app->db->createCommand('SELECT p.unit_id, u.puskesmas, IFNULL(p.pagu_ubah,0) pagu_ubah, sum(IFNULL(e.jumlah,0)) jumlah, SUBSTRING(IFNULL(cast(sum(IFNULL(e.jumlah,0))/IFNULL(p.pagu_ubah,0)*100 as char),0),1,5) prosentase
+            FROM activity_detail_ubah e
+            LEFT JOIN activity_data_ubah a ON a.id=e.activity_data_id
+            LEFT JOIN activity v ON v.id=a.activity_id
+            LEFT JOIN service s ON s.id=v.service_id
+            LEFT JOIN period p ON p.id=a.period_id
+            LEFT JOIN unit u ON u.id=p.unit_id
+            WHERE p.tahun=:periode AND p.unit_id=:unit
+            GROUP BY p.unit_id, p.pagu_ubah
+            ORDER BY puskesmas')
+            ->bindValue(':periode', $session['periodValue'])
+            ->bindValue(':unit', Yii::$app->user->identity->unit_id)
+            ->queryAll();
+
+            foreach($progress as $progress);
+
+            if(!empty($progress)){
+                $session['pagu_ubah'] = $progress['pagu_ubah'];
+            }else{
+                $session['pagu_ubah'] = 0;
+                $progress['prosentase'] = null;
+            }
+        }
+
+        if (isset($progress['prosentase'])){
+            $session['prosentase'] = $progress['prosentase'];
+            
+            if($progress['prosentase'] == 100){
+                $session['barStatus'] = 'bar';
+                $session['barColor'] = 'progress-bar-success';
+            }else{
+                $session['barStatus'] = 'active progress-striped';
+
+                if($progress['prosentase'] < 33.33){
+                    $session['barColor'] = 'progress-bar-info';
+                }
+                elseif($progress['prosentase'] >= 33.33 && $progress['prosentase']<=66.66){
+                    $session['barColor'] = 'progress-bar-default';
+                }
+                elseif($progress['prosentase'] > 66.66 && $progress['prosentase']<100){
+                    $session['barColor'] = 'progress-bar-warning';
+                }else{
+                    $session['barColor'] = 'progress-bar-danger';
+                }
+            }
+        }else{
+            $session['prosentase'] = 0;
+        }
 
         return $this->render('list', [
             'searchModel' => $searchModel,  
@@ -309,7 +382,7 @@ class ActivitydataController extends Controller
 
             foreach($cekPoa as $cekPoa){
                 if($cekPoa['jumlah'] > $cekPoa['pagu'] && $cekPoa['pagu'] > 0){
-                    // Yii::$app->session->setFlash('error', 'PERHATIAN!, Total Entri POA melebihi Pagu BOK.');
+                    Yii::$app->session->setFlash('error', 'PERHATIAN!, Total Entri POA melebihi Pagu BOK.');
                 }
             }
 
@@ -437,7 +510,8 @@ class ActivitydataController extends Controller
             $session = Yii::$app->session;
 
             if(!empty($progress)){
-                $session['pagu'] = $progress['pagu'];
+                // $session['pagu'] = $progress['pagu'];
+                $session['pagu'] = $progress['pagu']-$progress['jumlah'];
             }
         }else{
             $progress = Yii::$app->db->createCommand('SELECT p.unit_id, u.puskesmas, IFNULL(p.pagu_ubah,0) pagu_ubah, sum(IFNULL(e.jumlah,0)) jumlah, SUBSTRING(IFNULL(cast(sum(IFNULL(e.jumlah,0))/IFNULL(p.pagu_ubah,0)*100 as char),0),1,5) prosentase
@@ -458,32 +532,35 @@ class ActivitydataController extends Controller
 
             if(!empty($progress)){
                 $session['pagu_ubah'] = $progress['pagu_ubah'];
-
-                if ($progress['prosentase'] !== null){
-                    $session['prosentase'] = $progress['prosentase'];
-                }else{
-                    $session['prosentase'] = 0;
-                }
-                
-                if($progress['prosentase'] < 33.33){
-                    $session['barColor'] = 'progress-bar-success';
-                }
-                if($progress['prosentase'] >= 33.33 && $progress['prosentase']<=66.66){
-                    $session['barColor'] = 'progress-bar-warning';
-                }
-                if($progress['prosentase'] > 66.66){
-                    $session['barColor'] = 'progress-bar-danger';
-                }
-        
-                if($progress['prosentase'] == 100){
-                    $session['barStatus'] = 'bar';
-                }else{
-                    $session['barStatus'] = 'active progress-striped';
-                }
             }else{
                 $session['pagu_ubah'] = 0;
                 $progress['prosentase'] = null;
             }
+        }
+
+        if (isset($progress['prosentase'])){
+            $session['prosentase'] = $progress['prosentase'];
+            
+            if($progress['prosentase'] == 100){
+                $session['barStatus'] = 'bar';
+                $session['barColor'] = 'progress-bar-success';
+            }else{
+                $session['barStatus'] = 'active progress-striped';
+
+                if($progress['prosentase'] < 33.33){
+                    $session['barColor'] = 'progress-bar-info';
+                }
+                elseif($progress['prosentase'] >= 33.33 && $progress['prosentase']<=66.66){
+                    $session['barColor'] = 'progress-bar-default';
+                }
+                elseif($progress['prosentase'] > 66.66 && $progress['prosentase']<100){
+                    $session['barColor'] = 'progress-bar-warning';
+                }else{
+                    $session['barColor'] = 'progress-bar-danger';
+                }
+            }
+        }else{
+            $session['prosentase'] = 0;
         }
         
         return $this->render('view', [
@@ -733,10 +810,12 @@ class ActivitydataController extends Controller
             'unit_id' => Yii::$app->user->identity->unit_id,
         ])->one();
 
-        if($status->modul_1!=="P") {
-            $session['status_poa'] = '';
-        }else{
-            $session['status_poa'] = 'disabled';
+        if(!empty($status)){
+            if($status->modul_1!=="P") {
+                $session['status_poa'] = '';
+            }else{
+                $session['status_poa'] = 'disabled';
+            }
         }
 
         // $cekPoa = Yii::$app->db->createCommand('SELECT p.unit_id, u.puskesmas, IFNULL(p.pagu,0) pagu, sum(IFNULL(e.jumlah,0)) jumlah, IFNULL(cast(sum(IFNULL(e.jumlah,0))/IFNULL(p.pagu,0)*100 as decimal(10,2)),0) prosentase

@@ -165,7 +165,7 @@ class DeptprogramController extends Controller
             LEFT JOIN verification v ON v.program_id=p.id AND v.unit_id="'.Yii::$app->user->identity->unit_id.'"
             LEFT JOIN dept_group_sp2d sp1 ON sp1.id=p.dept_group_sp2d_id_1
             LEFT JOIN dept_group_sp2d sp2 ON sp2.id=p.dept_group_sp2d_id_2
-            WHERE p.tahun='.$session['deptPeriodValue'].' ORDER BY p.id';
+            WHERE p.tahun='.$session['deptPeriodValue'].' AND p.aktif=1 ORDER BY p.id';
 
             $dataProvider = new SqlDataProvider([
                 'sql' => $query,

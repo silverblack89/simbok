@@ -29,7 +29,8 @@ class Account extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['aktif'], 'string'],
+            [['aktif'], 'integer'],
+            [['kode'], 'string', 'max' => 25],
             [['nama_rekening'], 'string', 'max' => 255],
         ];
     }
@@ -41,6 +42,7 @@ class Account extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'kode' => 'Kode',
             'nama_rekening' => 'Nama Rekening',
             'aktif' => 'Aktif',
         ];

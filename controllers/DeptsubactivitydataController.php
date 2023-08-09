@@ -191,54 +191,61 @@ class DeptsubactivitydataController extends Controller
         $session = Yii::$app->session;
         $session['deptSubActivityDataId'] = $id;
 
-        if($modul !== 'new'){
-            if($modul == 'program'){
-                $query='SELECT p.id, p.nama_program nama FROM dept_program p
-                WHERE p.tahun='.$session['deptPeriodValue'].' AND p.bok_id='.$session['bok_id'].' ORDER BY p.id'; 
-                $session['modul'] = 'activity';
-            }
-            if($modul == 'activity'){
-                $query='SELECT s.id, s.nama_kegiatan nama FROM dept_activity s
-                WHERE s.dept_program_id='.$mid.' ORDER BY s.id';
-                $session['modul'] = 'subactivity';
-                $session['deptProgramIdNew'] = $mid;
-
-            }
-            if($modul == 'subactivity'){
-                $query='SELECT a.id, a.nama_sub_kegiatan nama FROM dept_sub_activity a
-                WHERE a.dept_activity_id='.$mid.' ORDER BY a.id';
-                $session['modul'] = 'select';
-                $session['deptActivityIdNew'] = $mid;
-            }
-            if($modul == 'select'){
-                $query='SELECT a.id, a.nama_sub_kegiatan nama FROM dept_sub_activity a
-                WHERE a.dept_activity_id='.$mid.' ORDER BY a.id';
-                $session['deptSubActivityIdNew'] = $mid;
-            }
-
-            $dataProvider = new SqlDataProvider([
-                'sql' => $query,
-                'pagination' => false
-            ]);
-
-            $model2 = $dataProvider->getModels();
-            
-            $program = Deptprogram::findOne($session['deptProgramIdNew']);
-            if(!empty($program)){ $model->deptProgramId = $program->nama_program; }
-            $activity = Deptactivity::findOne($session['deptActivityIdNew']);
-            if(!empty($activity)){ $model->deptActivityId = $activity->nama_kegiatan; }
-            $subactivity = Deptsubactivity::findOne($session['deptSubActivityIdNew']);
-            if(!empty($subactivity)){
-                $model->deptSubActivityId = $subactivity->nama_sub_kegiatan;
-                $model->dept_sub_activity_id = $subactivity->id;
-            }
-        }else{
+        if($modul == 'usr'){
             $dataProvider = null;
             $model2 = null;
+        }else{
+            if($modul !== 'new'){
+                if($modul == 'program'){
+                    $query='SELECT p.id, p.nama_program nama FROM dept_program p
+                    WHERE p.tahun='.$session['deptPeriodValue'].' AND p.bok_id='.$session['bok_id'].' ORDER BY p.id'; 
+                    $session['modul'] = 'activity';
+                }
+                if($modul == 'activity'){
+                    $query='SELECT s.id, s.nama_kegiatan nama FROM dept_activity s
+                    WHERE s.dept_program_id='.$mid.' ORDER BY s.id';
+                    $session['modul'] = 'subactivity';
+                    $session['deptProgramIdNew'] = $mid;
+
+                }
+                if($modul == 'subactivity'){
+                    $query='SELECT a.id, a.nama_sub_kegiatan nama FROM dept_sub_activity a
+                    WHERE a.dept_activity_id='.$mid.' ORDER BY a.id';
+                    $session['modul'] = 'select';
+                    $session['deptActivityIdNew'] = $mid;
+                }
+                if($modul == 'select'){
+                    $query='SELECT a.id, a.nama_sub_kegiatan nama FROM dept_sub_activity a
+                    WHERE a.dept_activity_id='.$mid.' ORDER BY a.id';
+                    $session['deptSubActivityIdNew'] = $mid;
+                }
+
+                $dataProvider = new SqlDataProvider([
+                    'sql' => $query,
+                    'pagination' => false
+                ]);
+
+                $model2 = $dataProvider->getModels();
+                
+                $program = Deptprogram::findOne($session['deptProgramIdNew']);
+                if(!empty($program)){ $model->deptProgramId = $program->nama_program; }
+                $activity = Deptactivity::findOne($session['deptActivityIdNew']);
+                if(!empty($activity)){ $model->deptActivityId = $activity->nama_kegiatan; }
+                $subactivity = Deptsubactivity::findOne($session['deptSubActivityIdNew']);
+                if(!empty($subactivity)){
+                    $model->deptSubActivityId = $subactivity->nama_sub_kegiatan;
+                    $model->dept_sub_activity_id = $subactivity->id;
+                }
+            }else{
+                $dataProvider = null;
+                $model2 = null;
+            }
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['deptsubactivitydata/list', 'id' => $session['deptSubActivityId']]);
+            if($modul !== 'usr'){
+                return $this->redirect(['deptsubactivitydata/list', 'id' => $session['deptSubActivityId']]);
+            }
         }elseif (Yii::$app->request->isAjax) {
             return $this->renderAjax('update', [
                 'model' => $model,

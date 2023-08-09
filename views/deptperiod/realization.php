@@ -24,6 +24,7 @@ if($session['sp2d'] > 0){
     }
 }else{
     $tmp = '';
+    $visible = false;
 }
 
 if (Yii::$app->user->identity->unit_id == 'DINKES'){

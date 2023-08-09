@@ -22,12 +22,29 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php
         if($session['poa'] == 'def'){
-            echo Progress::widget([
-                'bars' => [
-                    ['percent' => $session['prosentase'], 'label' => $session['prosentase'].'% dari Pagu BOK (RP. ' .number_format($session['pagu'], 0, ',', '.'). ')', 'options' => ['class' => $session['barColor']]],
-                ],
-                'options' => ['class' => $session['barStatus']]
-            ]);
+            if($session['pagu'] < 0){
+                echo Progress::widget([
+                    'bars' => [
+                        ['percent' => $session['prosentase'], 'label' => number_format((int)$session['prosentase'],0,',','.').'% dari Pagu BOK (Lebih RP. ' .number_format(abs($session['pagu']), 0, ',', '.'). ')', 'options' => ['class' => $session['barColor']]],
+                    ],
+                    'options' => ['class' => $session['barStatus']]
+                ]);
+            }   
+            elseif($session['pagu']> 0){
+                echo Progress::widget([
+                    'bars' => [
+                        ['percent' => $session['prosentase'], 'label' => number_format((int)$session['prosentase'],0,',','.').'% dari Pagu BOK (Kurang RP. ' .number_format($session['pagu'], 0, ',', '.'). ')', 'options' => ['class' => $session['barColor']]],
+                    ],
+                    'options' => ['class' => $session['barStatus']]
+                ]);
+            }else{
+                echo Progress::widget([
+                    'bars' => [
+                        ['percent' => $session['prosentase'], 'label' => $session['prosentase'].'% dari Pagu BOK', 'options' => ['class' => $session['barColor']]],
+                    ],
+                    'options' => ['class' => $session['barStatus']]
+                ]);
+            }
         }
 
         if($session['poa'] == 'perubahan'){

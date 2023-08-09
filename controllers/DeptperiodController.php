@@ -649,7 +649,7 @@ class DeptperiodController extends Controller
             $session['poaLabel'] = ' Perubahan';
         }
 
-        $query = 'SELECT g.nama_program, s.nama_kegiatan, v.nama_sub_kegiatan, IFNULL(a.bentuk_kegiatan, v.nama_sub_kegiatan) bentuk_kegiatan, 
+        $query = 'SELECT g.nama_program, s.nama_kegiatan, v.nama_sub_kegiatan, a.id, a.dept_period_id, p.unit_id, IFNULL(a.bentuk_kegiatan, v.nama_sub_kegiatan) bentuk_kegiatan, 
         a.indikator_hasil, a.target_hasil, a.indikator_keluaran, a.target_keluaran, c.kode, c.nama_rekening, e.rincian, 
         e.vol_1, e.satuan_1, 
         
@@ -995,8 +995,11 @@ class DeptperiodController extends Controller
      */
     public function actionCreate()
     {
-        $POST_VARIABLE=Yii::$app->request->post('Deptperiod');
-        $request = $POST_VARIABLE['tahun'];
+        $session = Yii::$app->session;
+        $request = $session['deptPeriodValue'];
+
+        // $POST_VARIABLE=Yii::$app->request->post('Deptperiod');
+        // $request = $POST_VARIABLE['tahun'];
 
         $period = Deptperiod::find()
         ->where(['unit_id' => Yii::$app->user->identity->username, 'tahun' => $request])
@@ -2289,41 +2292,41 @@ class DeptperiodController extends Controller
              
         }
 
-        $spreadsheet->getSecurity()->setLockWindows(true);
-        $spreadsheet->getSecurity()->setLockStructure(true);
-        $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
+        // $spreadsheet->getSecurity()->setLockWindows(true);
+        // $spreadsheet->getSecurity()->setLockStructure(true);
+        // $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
 
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setPassword('silverblack');
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSheet(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSort(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setInsertRows(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setFormatCells(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setPassword('silverblack');
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSort(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setInsertRows(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setFormatCells(true);
 
-        $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
 
         $spreadsheet->setActiveSheetIndex(0);
 
-        $spreadsheet->getSecurity()->setLockWindows(true);
-        $spreadsheet->getSecurity()->setLockStructure(true);
-        $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
+        // $spreadsheet->getSecurity()->setLockWindows(true);
+        // $spreadsheet->getSecurity()->setLockStructure(true);
+        // $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
 
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setPassword('silverblack');
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSheet(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSort(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setInsertRows(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setFormatCells(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setPassword('silverblack');
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSort(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setInsertRows(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setFormatCells(true);
 
-        $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
         
 
         $writer = new Xlsx($spreadsheet);
@@ -2939,22 +2942,22 @@ class DeptperiodController extends Controller
 
         $spreadsheet->setActiveSheetIndex(0);
 
-        $spreadsheet->getSecurity()->setLockWindows(true);
-        $spreadsheet->getSecurity()->setLockStructure(true);
-        $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
+        // $spreadsheet->getSecurity()->setLockWindows(true);
+        // $spreadsheet->getSecurity()->setLockStructure(true);
+        // $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
 
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setPassword('silverblack');
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSheet(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSort(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setInsertRows(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setFormatCells(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setPassword('silverblack');
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSort(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setInsertRows(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setFormatCells(true);
 
-        $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
         
 
         $writer = new Xlsx($spreadsheet);
@@ -3097,7 +3100,7 @@ class DeptperiodController extends Controller
             GROUP BY p.unit_id
         ) ub ON ub.unit_id=u.id
         LEFT JOIN `dept_status` t ON t.unit_id=u.id AND t.tahun='.$period.'
-        WHERE u.id != "DINKES" AND mid(u.id,1,2) != "P3"
+        WHERE u.id != "DINKES" AND mid(u.id,1,1) != "1"
         ORDER BY u.puskesmas';
 
         foreach($data as $row){
@@ -3123,7 +3126,7 @@ class DeptperiodController extends Controller
     public function actionUnlockallreal($id,$tw)
     {
         $session = Yii::$app->session;
-        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,3) <> "P33" AND id <> "DINKES"')
+        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,1) <> "1" AND id <> "DINKES"')
         ->queryAll();
 
         if(!empty($data))
@@ -3171,7 +3174,7 @@ class DeptperiodController extends Controller
     public function actionLockallreal($id,$tw)
     {
         $session = Yii::$app->session;
-        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,3) <> "P33" AND id <> "DINKES"')
+        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,1) <> "1" AND id <> "DINKES"')
         ->queryAll();
 
         if(!empty($data))
@@ -3979,7 +3982,7 @@ class DeptperiodController extends Controller
     {
         $session = Yii::$app->session;
 
-        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,3) <> "P33" AND id <> "DINKES"')
+        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,1) <> "1" AND id <> "DINKES"')
         ->queryAll();
 
         if(!empty($data))
@@ -4097,7 +4100,7 @@ class DeptperiodController extends Controller
     public function actionUnlockall($id)
     {
         $session = Yii::$app->session;
-        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,3) <> "P33" AND id <> "DINKES"')
+        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,1) <> "1" AND id <> "DINKES"')
         ->queryAll();
 
         if(!empty($data))
@@ -4587,15 +4590,16 @@ class DeptperiodController extends Controller
 
     public function actionDetailpoa($p)
     {
-        $POST_VARIABLE=Yii::$app->request->post('Deptperiod');
-        $period = $POST_VARIABLE['tahun'];
+        // $POST_VARIABLE=Yii::$app->request->post('Deptperiod');
+        // $period = $POST_VARIABLE['tahun'];
 
         $session = Yii::$app->session;
-        if(!isset($period)){
-            $period = $session['deptPeriodValue'];
-        }else{
-            $session['deptPeriodValue'] = $period;
-        }
+        // if(!isset($period)){
+        //     $period = $session['deptPeriodValue'];
+        // }else{
+        //     $session['deptPeriodValue'] = $period;
+        // }
+        $period = $session['deptPeriodValue'];
 
         $triwulan = $p;
 
@@ -4723,11 +4727,21 @@ class DeptperiodController extends Controller
         ->bindValue(':tahun', $period)
         ->queryAll();
 
+        // foreach($cekstsreal as $ceksts){
+        //     if($p == 1){$stsreal = $ceksts['status_real_tw1'];}
+        //     if($p == 2){$stsreal = $ceksts['status_real_tw2'];}
+        //     if($p == 3){$stsreal = $ceksts['status_real_tw3'];}
+        //     if($p == 4){$stsreal = $ceksts['status_real_tw4'];}
+        // }
+
+        if(!empty($cekstsreal))
         foreach($cekstsreal as $ceksts){
             if($p == 1){$stsreal = $ceksts['status_real_tw1'];}
             if($p == 2){$stsreal = $ceksts['status_real_tw2'];}
             if($p == 3){$stsreal = $ceksts['status_real_tw3'];}
             if($p == 4){$stsreal = $ceksts['status_real_tw4'];}
+        }else{
+            $stsreal = 0;
         }
 
         return $this->render('realization', [

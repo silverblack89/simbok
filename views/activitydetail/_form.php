@@ -58,7 +58,7 @@ $session = Yii::$app->session;
                 </div>   -->
 
                 <div class="col-md-5">
-                    <?= $form->field($model, 'rincian')->textInput(['disabled' => $disabled, 'maxlength' => true, 'placeholder' => 'rincian rekening']) ?>
+                    <?= $form->field($model, 'rincian')->textInput(['disabled' => $disabled, 'maxlength' => true, 'placeholder' => 'rincian belanja']) ?>
                 </div>  
                 <!-- <div class="col-md-4">
                     <?= $form->field($model, 'total_poa')->textInput(['maxlength' => true])->label('Total POA')->widget(\yii\widgets\MaskedInput::className(), [

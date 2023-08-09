@@ -98,7 +98,7 @@ if($session['status_poa']=='disabled'){
 
                 <?= $form->field($model, 'period_id')->textInput() ?> -->
 
-                <?= $form->field($model, 'activity_data_sub_id')->dropDownList( ArrayHelper::map(Activitydatasub::find()->where(['tahun' => $session['periodValue']])->all(),'id','nama'),['prompt'=>'Pilih'])->label('Sub Kegiatan') ?>
+                <?= $form->field($model, 'activity_data_sub_id')->dropDownList( ArrayHelper::map(Activitydatasub::find()->where(['tahun' => $session['periodValue'], 'aktif' => 1])->all(),'id','nama'),['prompt'=>'Pilih'])->label('Sub Kegiatan') ?>
 
                 <?= $form->field($model, 'bentuk_kegiatan')->textInput(['maxlength' => true, 'disabled' => $disabled]) ?>
 

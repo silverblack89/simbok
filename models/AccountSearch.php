@@ -18,7 +18,7 @@ class AccountSearch extends Account
     {
         return [
             [['id'], 'integer'],
-            [['nama_rekening', 'aktif'], 'safe'],
+            [['nama_rekening', 'kode', 'aktif'], 'safe'],
         ];
     }
 
@@ -61,7 +61,8 @@ class AccountSearch extends Account
             'id' => $this->id,
         ]);
 
-        $query->andFilterWhere(['like', 'nama_rekening', $this->nama_rekening])
+        $query->andFilterWhere(['like', 'kode', $this->kode])
+            ->andFilterWhere(['like', 'nama_rekening', $this->nama_rekening])
             ->andFilterWhere(['like', 'aktif', $this->aktif]);
 
         return $dataProvider;

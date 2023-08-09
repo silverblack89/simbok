@@ -69,9 +69,35 @@ class DeptsubactivitydetailController extends Controller
     {
         $session = Yii::$app->session;
         $POST_VARIABLE=Yii::$app->request->post('Deptubactivitydetail');
-        $poa_vol_1 = $POST_VARIABLE['vol_1'];
-        $poa_vol_2 = $POST_VARIABLE['vol_2'];
-        $poa_unit_cost = $POST_VARIABLE['unit_cost'];
+        if(isset($POST_VARIABLE['vol_1'])){
+            $poa_vol_1 = $POST_VARIABLE['vol_1'];
+        }else{
+            $poa_vol_1 = 1;
+        }
+        
+        if(isset($POST_VARIABLE['vol_2'])){
+            $poa_vol_2 = $POST_VARIABLE['vol_2'];
+        }else{
+            $poa_vol_2 = 1;
+        }
+
+        if(isset($POST_VARIABLE['vol_3'])){
+            $poa_vol_3 = $POST_VARIABLE['vol_3'];
+        }else{
+            $poa_vol_3 = 1;
+        }
+
+        if(isset($POST_VARIABLE['vol_4'])){
+            $poa_vol_4 = $POST_VARIABLE['vol_4'];
+        }else{
+            $poa_vol_4 = 1;
+        }
+        
+        if(isset($POST_VARIABLE['unit_cost'])){
+            $poa_unit_cost = $POST_VARIABLE['unit_cost'];
+        }else{
+            $poa_unit_cost = 1;
+        }
 
         $deptsubactivitydata = Deptsubactivitydata::findOne($id);
         $deptaccountaccess = Deptaccountaccess::find()->where(['dept_sub_activity_id' => $deptsubactivitydata->dept_sub_activity_id])->all();
@@ -128,6 +154,36 @@ class DeptsubactivitydetailController extends Controller
         $session = Yii::$app->session;
         $model = $this->findModel($id);
 
+        if(isset($POST_VARIABLE['vol_1'])){
+            $poa_vol_1 = $POST_VARIABLE['vol_1'];
+        }else{
+            $poa_vol_1 = 1;
+        }
+        
+        if(isset($POST_VARIABLE['vol_2'])){
+            $poa_vol_2 = $POST_VARIABLE['vol_2'];
+        }else{
+            $poa_vol_2 = 1;
+        }
+
+        if(isset($POST_VARIABLE['vol_3'])){
+            $poa_vol_3 = $POST_VARIABLE['vol_3'];
+        }else{
+            $poa_vol_3 = 1;
+        }
+
+        if(isset($POST_VARIABLE['vol_4'])){
+            $poa_vol_4 = $POST_VARIABLE['vol_4'];
+        }else{
+            $poa_vol_4 = 1;
+        }
+        
+        if(isset($POST_VARIABLE['unit_cost'])){
+            $poa_unit_cost = $POST_VARIABLE['unit_cost'];
+        }else{
+            $poa_unit_cost = 1;
+        }
+
         if(empty($model->vol_1)){$vol1 = 1;}else{$vol1 = $model->vol_1;}
         if(empty($model->vol_2)){$vol2 = 1;}else{$vol2 = $model->vol_2;}
         if(empty($model->vol_3)){$vol3 = 1;}else{$vol3 = $model->vol_3;}
@@ -135,6 +191,19 @@ class DeptsubactivitydetailController extends Controller
         if(empty($model->unit_cost)){$harga = 1;}else{$harga = $model->unit_cost;}
 
         $model->total =  $vol1*$vol2*$vol3*$vol4*$harga;
+
+        $deptsubactivitydata = Deptsubactivitydata::findOne($id);
+        $deptaccountaccess = Deptaccountaccess::find()->where(['dept_sub_activity_id' => $deptsubactivitydata->dept_sub_activity_id])->all();
+
+        if(!empty($deptaccountaccess)){
+            foreach($deptaccountaccess as $daa)
+            {
+                $arrAkun[] = "'".$daa['account_id']."'"; 
+            } 
+            $akun = implode(", ", $arrAkun);
+        }else{
+            $akun = null;
+        }
 
         $bok = $model->getStatus($session['deptSubActivityId']);
         if ($bok <= 5){
@@ -151,12 +220,14 @@ class DeptsubactivitydetailController extends Controller
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('update', [
                 'model' => $model,
-                'sd' => $sd
+                'sd' => $sd,
+                'akun' => $akun
             ]);
         }else{
             return $this->render('update', [
                 'model' => $model,
-                'sd' => $sd
+                'sd' => $sd,
+                'akun' => $akun
             ]);
         }
     }

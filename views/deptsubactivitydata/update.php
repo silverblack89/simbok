@@ -17,26 +17,29 @@ $this->params['breadcrumbs'][] = ['label' => 'Bentuk Kegiatan', 'url' => ['depts
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="deptsubactivitydata-update">
-
-    <?php if($modul == 'new'){ ?>
-    <!-- <h1><?= Html::encode($this->title) ?></h1> -->
-        <?php
-        // echo Progress::widget([
-        //     'bars' => [
-        //         ['percent' => $session['prosentase'], 'label' => $session['prosentase'].'% dari Pagu BOK (RP. ' .number_format($session['pagu'], 0, ',', '.'). ')', 'options' => ['class' => $session['barColor']]],
-        //     ],
-        //     'options' => ['class' => $session['barStatus']]
-        // ]);
-    ?>
-    <?php }else{ 
-        if($modul=='program'){?> 
-            <h1><?= Html::encode('Rinci Menu Kegiatan') ?></h1>
-        <?php }elseif ($modul=='activity'){ ?>
-            <h1><?= Html::encode('Komponen') ?></h1>
-        <?php }elseif ($modul=='subactivity'){ ?>
-            <h1><?= Html::encode('Kegiatan') ?></h1>
-        <?php }else{ ?>
-            <h1><?= Html::encode('Lokasi Tujuan Pemindahan Data Kegiatan') ?></h1>
+    <?php if($modul == 'usr'){ ?>
+        
+    <?php }else{ ?>
+        <?php if($modul == 'new'){ ?>
+        <!-- <h1><?= Html::encode($this->title) ?></h1> -->
+            <?php
+            // echo Progress::widget([
+            //     'bars' => [
+            //         ['percent' => $session['prosentase'], 'label' => $session['prosentase'].'% dari Pagu BOK (RP. ' .number_format($session['pagu'], 0, ',', '.'). ')', 'options' => ['class' => $session['barColor']]],
+            //     ],
+            //     'options' => ['class' => $session['barStatus']]
+            // ]);
+        ?>
+        <?php }else{ 
+            if($modul=='program'){?> 
+                <h1><?= Html::encode('Rinci Menu Kegiatan') ?></h1>
+            <?php }elseif ($modul=='activity'){ ?>
+                <h1><?= Html::encode('Komponen') ?></h1>
+            <?php }elseif ($modul=='subactivity'){ ?>
+                <h1><?= Html::encode('Kegiatan') ?></h1>
+            <?php }else{ ?>
+                <h1><?= Html::encode('Lokasi Tujuan Pemindahan Data Kegiatan') ?></h1>
+            <?php } ?>
         <?php } ?>
     <?php } ?>
 

@@ -402,17 +402,27 @@ class PeriodController extends Controller
     {
         $session = Yii::$app->session;
         $session['poa'] = $p;
-        $POST_VARIABLE=Yii::$app->request->post('Period');
-        $request = $POST_VARIABLE['tahun'];
+
+        // if(isset($POST_VARIABLE)){
+        //     $POST_VARIABLE=Yii::$app->request->post('Period');
+        //     $request = $POST_VARIABLE['tahun'];
+        // }else{
+        //     $request = date('Y');
+        // }
+
+        $request = $session['periodValue'];
 
         $period = Period::find()
-        ->where(['unit_id' => Yii::$app->user->identity->unit_id, 'tahun' => $request])
-        ->one();
+            ->where(['unit_id' => Yii::$app->user->identity->unit_id, 'tahun' => $request])
+            ->one();
+
+        // return var_dump($period);
 
         if (!isset($period)) {
             $model = new Period();
             $model->setScenario('listprogram');
             $model->unit_id = Yii::$app->user->identity->unit_id;
+            $model->tahun = $request;
             $model->pagu = 0;
             $model->pagu_covid = 0;
             $model->pagu_ukm = 0;
@@ -638,7 +648,7 @@ class PeriodController extends Controller
         // ->bindValue(':periode', $session['periodValue']) 
         // ->queryAll();
 
-        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,3) = "P33"')
+        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,1) = "1"')
         ->queryAll();
 
         if(!empty($data))
@@ -786,7 +796,7 @@ class PeriodController extends Controller
         // ->bindValue(':periode', $session['periodValue']) 
         // ->queryAll();
 
-        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,3) = "P33"')
+        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,1) = "1"')
         ->queryAll();
 
         if(!empty($data))
@@ -904,7 +914,7 @@ class PeriodController extends Controller
     public function actionUnlockallreal($id,$tw)
     {
         $session = Yii::$app->session;
-        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,3) = "P33"')
+        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,1) = "1"')
         ->queryAll();
 
         if(!empty($data))
@@ -952,7 +962,7 @@ class PeriodController extends Controller
     public function actionLockallreal($id,$tw)
     {
         $session = Yii::$app->session;
-        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,3) = "P33"')
+        $data = Yii::$app->db->createCommand('select id unit_id from unit where mid(id,1,1) = "1"')
         ->queryAll();
 
         if(!empty($data))
@@ -1004,19 +1014,19 @@ class PeriodController extends Controller
         if(substr($id,-1)==='P'){
             $status = Status::find()->where([
                 'tahun' => $session['periodValue'],
-                'unit_id' => substr($id,0,11),
+                'unit_id' => substr($id,0,7),
             ])->count();
 
             if($status=="0") {
                 $model = new Status(); //$params
                 $model->modul_1 = substr($id,-1);
                 $model->tahun = $session['periodValue'];
-                $model->unit_id = substr($id,0,11);
+                $model->unit_id = substr($id,0,7);
                 $model->save();
             }else{
                 $status = Status::find()->where([
                     'tahun' => $session['periodValue'],
-                    'unit_id' => substr($id,0,11),
+                    'unit_id' => substr($id,0,7),
                 ])->one();
 
                 $model = Status::findOne($status['id']);
@@ -1024,12 +1034,12 @@ class PeriodController extends Controller
                 if($model->modul_1 === substr($id,-1)){
                     $model->modul_1 = null;
                     $model->tahun = $session['periodValue'];
-                    $model->unit_id = substr($id,0,11);
+                    $model->unit_id = substr($id,0,7);
                     $model->save();
                 }else{
                     $model->modul_1 = substr($id,-1);
                     $model->tahun = $session['periodValue'];
-                    $model->unit_id = substr($id,0,11);
+                    $model->unit_id = substr($id,0,7);
                     $model->save();
                 }
             }
@@ -1038,19 +1048,19 @@ class PeriodController extends Controller
         if(substr($id,-1)==='G'){
             $status = Status::find()->where([
                 'tahun' => $session['periodValue'],
-                'unit_id' => substr($id,0,11),
+                'unit_id' => substr($id,0,7),
             ])->count();
 
             if($status=="0") {
                 $model = new Status($params);
                 $model->modul_2 = substr($id,-1);
                 $model->tahun = $session['periodValue'];
-                $model->unit_id = substr($id,0,11);
+                $model->unit_id = substr($id,0,7);
                 $model->save();
             }else{
                 $status = Status::find()->where([
                     'tahun' => $session['periodValue'],
-                    'unit_id' => substr($id,0,11),
+                    'unit_id' => substr($id,0,7),
                 ])->one();
 
                 $model = Status::findOne($status['id']);
@@ -1058,12 +1068,12 @@ class PeriodController extends Controller
                 if($model->modul_2 === substr($id,-1)){
                     $model->modul_2 = null;
                     $model->tahun = $session['periodValue'];
-                    $model->unit_id = substr($id,0,11);
+                    $model->unit_id = substr($id,0,7);
                     $model->save();
                 }else{
                     $model->modul_2 = substr($id,-1);
                     $model->tahun = $session['periodValue'];
-                    $model->unit_id = substr($id,0,11);
+                    $model->unit_id = substr($id,0,7);
                     $model->save();
                 }
             }
@@ -1072,19 +1082,19 @@ class PeriodController extends Controller
         if(substr($id,-1)==='R'){
             $status = Status::find()->where([
                 'tahun' => $session['periodValue'],
-                'unit_id' => substr($id,0,11),
+                'unit_id' => substr($id,0,7),
             ])->count();
 
             if($status=="0") {
                 $model = new Status($params);
                 $model->modul_3 = substr($id,-1);
                 $model->tahun = $session['periodValue'];
-                $model->unit_id = substr($id,0,11);
+                $model->unit_id = substr($id,0,7);
                 $model->save();
             }else{
                 $status = Status::find()->where([
                     'tahun' => $session['periodValue'],
-                    'unit_id' => substr($id,0,11),
+                    'unit_id' => substr($id,0,7),
                 ])->one();
 
                 $model = Status::findOne($status['id']);
@@ -1092,12 +1102,12 @@ class PeriodController extends Controller
                 if($model->modul_3 === substr($id,-1)){
                     $model->modul_3 = null;
                     $model->tahun = $session['periodValue'];
-                    $model->unit_id = substr($id,0,11);
+                    $model->unit_id = substr($id,0,7);
                     $model->save();
                 }else{
                     $model->modul_3 = substr($id,-1);
                     $model->tahun = $session['periodValue'];
-                    $model->unit_id = substr($id,0,11);
+                    $model->unit_id = substr($id,0,7);
                     $model->save();
                 }
             }
@@ -1106,19 +1116,19 @@ class PeriodController extends Controller
         if(substr($id,-1)==='L'){
             $status = Status::find()->where([
                 'tahun' => $session['periodValue'],
-                'unit_id' => substr($id,0,11),
+                'unit_id' => substr($id,0,7),
             ])->count();
 
             if($status=="0") {
                 $model = new Status($params);
                 $model->modul_4 = substr($id,-1);
                 $model->tahun = $session['periodValue'];
-                $model->unit_id = substr($id,0,11);
+                $model->unit_id = substr($id,0,7);
                 $model->save();
             }else{
                 $status = Status::find()->where([
                     'tahun' => $session['periodValue'],
-                    'unit_id' => substr($id,0,11),
+                    'unit_id' => substr($id,0,7),
                 ])->one();
 
                 $model = Status::findOne($status['id']);
@@ -1126,12 +1136,12 @@ class PeriodController extends Controller
                 if($model->modul_4 === substr($id,-1)){
                     $model->modul_4 = null;
                     $model->tahun = $session['periodValue'];
-                    $model->unit_id = substr($id,0,11);
+                    $model->unit_id = substr($id,0,7);
                     $model->save();
                 }else{
                     $model->modul_4 = substr($id,-1);
                     $model->tahun = $session['periodValue'];
-                    $model->unit_id = substr($id,0,11);
+                    $model->unit_id = substr($id,0,7);
                     $model->save();
                 }
             }
@@ -1147,14 +1157,14 @@ class PeriodController extends Controller
         if(substr($id,-1)==='L'){
             $status = Status::find()->where([
                 'tahun' => $session['periodValue'],
-                'unit_id' => substr($id,0,11),
+                'unit_id' => substr($id,0,7),
             ])->count();
 
             if($status=="0") {
                 $model = new Status($params);
                 $model->modul_4 = substr($id,-1);
                 $model->tahun = $session['periodValue'];
-                $model->unit_id = substr($id,0,11);
+                $model->unit_id = substr($id,0,7);
                 if($tw == '1'){$model->tw_1=$tw;}
                 if($tw == '2'){$model->tw_2=$tw;}
                 if($tw == '3'){$model->tw_3=$tw;}
@@ -1163,7 +1173,7 @@ class PeriodController extends Controller
             }else{
                 $status = Status::find()->where([
                     'tahun' => $session['periodValue'],
-                    'unit_id' => substr($id,0,11),
+                    'unit_id' => substr($id,0,7),
                 ])->one();
 
                 $model = Status::findOne($status['id']);
@@ -1171,7 +1181,7 @@ class PeriodController extends Controller
                 if($model->modul_4 === substr($id,-1)){
                     $model->modul_4 = null;
                     $model->tahun = $session['periodValue'];
-                    $model->unit_id = substr($id,0,11);
+                    $model->unit_id = substr($id,0,7);
                     if($tw == '1'){$model->tw_1=null;}
                     if($tw == '2'){$model->tw_2=null;}
                     if($tw == '3'){$model->tw_3=null;}
@@ -1180,7 +1190,7 @@ class PeriodController extends Controller
                 }else{
                     $model->modul_4 = substr($id,-1);
                     $model->tahun = $session['periodValue'];
-                    $model->unit_id = substr($id,0,11);
+                    $model->unit_id = substr($id,0,7);
                     if($tw == '1'){$model->tw_1=$tw;}
                     if($tw == '2'){$model->tw_2=$tw;}
                     if($tw == '3'){$model->tw_3=$tw;}
@@ -1334,7 +1344,7 @@ class PeriodController extends Controller
                 GROUP BY p.unit_id
             ) ub ON ub.unit_id=u.id
             LEFT JOIN `status` t ON t.unit_id=u.id AND t.tahun='.$period.'
-            WHERE u.id != "DINKES" AND mid(u.id,1,2) != "P3"
+            WHERE u.id != "DINKES" AND mid(u.id,1,1) != "1"
             ORDER BY u.puskesmas';
         }else{
             $data = Yii::$app->db->createCommand('SELECT p.unit_id, u.puskesmas, IFNULL(p.pagu,0) pagu, sum(IFNULL(e.jumlah,0)) jumlah, SUBSTRING(IFNULL(cast(sum(IFNULL(e.jumlah,0))/IFNULL(p.pagu,0)*100 as char),0),1,5) prosentase,
@@ -1459,7 +1469,7 @@ class PeriodController extends Controller
                 WHERE p.tahun='.$period.'
                 GROUP BY p.unit_id
             ) rl ON rl.unit_id=u.id
-            WHERE u.id != "DINKES" AND mid(u.id,1,2) = "P3"
+            WHERE u.id != "DINKES" AND mid(u.id,1,1) = "1"
             group BY u.id
             ORDER BY u.puskesmas';
         }
@@ -1477,6 +1487,8 @@ class PeriodController extends Controller
             ]);
 
         $model = $dataProvider->getModels();
+
+        // return var_dump($data);
 
         return $this->render('list', [
             'data' => $model,
@@ -5473,15 +5485,17 @@ class PeriodController extends Controller
 
     public function actionDetailpoa($p)
     {
-        $POST_VARIABLE=Yii::$app->request->post('Period');
-        $period = $POST_VARIABLE['tahun'];
+        // $POST_VARIABLE=Yii::$app->request->post('Period');
+        // $period = $POST_VARIABLE['tahun'];
 
         $session = Yii::$app->session;
-        if(!isset($period)){
-            $period = $session['periodValue'];
-        }else{
-            $session['periodValue'] = $period;
-        }
+        // if(!isset($period)){
+        //     $period = $session['periodValue'];
+        // }else{
+        //     $session['periodValue'] = $period;
+        // }
+
+        $period = $session['periodValue'];
 
         $triwulan = $p;
 
@@ -5610,11 +5624,14 @@ class PeriodController extends Controller
         ->bindValue(':tahun', $period)
         ->queryAll();
 
+        if(!empty($cekstsreal))
         foreach($cekstsreal as $ceksts){
             if($p == 1){$stsreal = $ceksts['status_real_tw1'];}
             if($p == 2){$stsreal = $ceksts['status_real_tw2'];}
             if($p == 3){$stsreal = $ceksts['status_real_tw3'];}
             if($p == 4){$stsreal = $ceksts['status_real_tw4'];}
+        }else{
+            $stsreal = 0;
         }
 
         return $this->render('real', [
@@ -6229,7 +6246,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309010101" group BY s.id
+            WHERE p.unit_id="1031770" group BY s.id
         ) kalijambe ON kalijambe.id=s.id
         LEFT JOIN
         (
@@ -6241,7 +6258,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309020101" group BY s.id
+            WHERE p.unit_id="1031771" group BY s.id
         ) plupuh1 ON plupuh1.id=s.id
         LEFT JOIN
         (
@@ -6253,7 +6270,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309020202" group BY s.id
+            WHERE p.unit_id="1031772" group BY s.id
         ) plupuh2 ON plupuh2.id=s.id
         LEFT JOIN
         (
@@ -6265,7 +6282,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309030101" group BY s.id
+            WHERE p.unit_id="1031774" group BY s.id
         ) masaran1 ON masaran1.id=s.id
         LEFT JOIN
         (
@@ -6277,7 +6294,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309040102" group BY s.id
+            WHERE p.unit_id="1031773" group BY s.id
         ) masaran2 ON masaran2.id=s.id
         LEFT JOIN
         (
@@ -6289,7 +6306,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309040201" group BY s.id
+            WHERE p.unit_id="1031775" group BY s.id
         ) kedawung1 ON kedawung1.id=s.id
         LEFT JOIN
         (
@@ -6301,7 +6318,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309050201" group BY s.id
+            WHERE p.unit_id="1031776" group BY s.id
         ) kedawung2 ON kedawung2.id=s.id
         LEFT JOIN
         (
@@ -6313,7 +6330,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309050202" group BY s.id
+            WHERE p.unit_id="1031777" group BY s.id
         ) sambirejo ON sambirejo.id=s.id
         LEFT JOIN
         (
@@ -6325,7 +6342,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309060201" group BY s.id
+            WHERE p.unit_id="1031778" group BY s.id
         ) gondang ON gondang.id=s.id
         LEFT JOIN
         (
@@ -6337,7 +6354,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309070201" group BY s.id
+            WHERE p.unit_id="1031779" group BY s.id
         ) sambungmacan1 ON sambungmacan1.id=s.id
         LEFT JOIN
         (
@@ -6349,7 +6366,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309080102" group BY s.id
+            WHERE p.unit_id="1031780" group BY s.id
         ) sambungmacan2 ON sambungmacan2.id=s.id
         LEFT JOIN
         (
@@ -6361,7 +6378,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309090201" group BY s.id
+            WHERE p.unit_id="1031781" group BY s.id
         ) ngrampal ON ngrampal.id=s.id
         LEFT JOIN
         (
@@ -6373,7 +6390,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309090202" group BY s.id
+            WHERE p.unit_id="1031782" group BY s.id
         ) karangmalang ON karangmalang.id=s.id
         LEFT JOIN
         (
@@ -6385,7 +6402,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309100201" group BY s.id
+            WHERE p.unit_id="1031783" group BY s.id
         ) sragen ON sragen.id=s.id
         LEFT JOIN
         (
@@ -6397,7 +6414,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309110101" group BY s.id
+            WHERE p.unit_id="1031784" group BY s.id
         ) sidoharjo ON sidoharjo.id=s.id
         LEFT JOIN
         (
@@ -6409,7 +6426,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309120101" group BY s.id
+            WHERE p.unit_id="1031785" group BY s.id
         ) tanon1 ON tanon1.id=s.id
         LEFT JOIN
         (
@@ -6421,7 +6438,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309130201" group BY s.id
+            WHERE p.unit_id="1031786" group BY s.id
         ) tanon2 ON tanon2.id=s.id
         LEFT JOIN
         (
@@ -6433,7 +6450,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309140101" group BY s.id
+            WHERE p.unit_id="1031787" group BY s.id
         ) gemolong ON gemolong.id=s.id
         LEFT JOIN
         (
@@ -6445,7 +6462,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309150101" group BY s.id
+            WHERE p.unit_id="1031788" group BY s.id
         ) miri ON miri.id=s.id
         LEFT JOIN
         (
@@ -6457,7 +6474,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309150202" group BY s.id
+            WHERE p.unit_id="1031789" group BY s.id
         ) sumberlawang ON sumberlawang.id=s.id
         LEFT JOIN
         (
@@ -6469,7 +6486,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309160101" group BY s.id
+            WHERE p.unit_id="1031790" group BY s.id
         ) mondokan ON mondokan.id=s.id
         LEFT JOIN
         (
@@ -6481,7 +6498,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309170101" group BY s.id
+            WHERE p.unit_id="1031791" group BY s.id
         ) sukodono ON sukodono.id=s.id
         LEFT JOIN
         (
@@ -6493,7 +6510,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309180101" group BY s.id
+            WHERE p.unit_id="1031792" group BY s.id
         ) gesi ON gesi.id=s.id
         LEFT JOIN
         (
@@ -6505,7 +6522,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309180102" group BY s.id
+            WHERE p.unit_id="1031793" group BY s.id
         ) tangen ON tangen.id=s.id
         LEFT JOIN
         (
@@ -6517,7 +6534,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309190101" group BY s.id
+            WHERE p.unit_id="1031794" group BY s.id
         ) jenar ON jenar.id=s.id
         WHERE p.tahun='.$session['periodValue'].' AND p.aktif=1 AND p.detail=0
         UNION
@@ -6548,7 +6565,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309010101" group BY v.id
+            WHERE p.unit_id="1031770" group BY v.id
         ) kalijambe ON kalijambe.id=a.id
         LEFT JOIN
         (
@@ -6560,7 +6577,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309020101" group BY v.id
+            WHERE p.unit_id="1031771" group BY v.id
         ) plupuh1 ON plupuh1.id=a.id
         LEFT JOIN
         (
@@ -6572,7 +6589,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309020202" group BY v.id
+            WHERE p.unit_id="1031772" group BY v.id
         ) plupuh2 ON plupuh2.id=a.id
         LEFT JOIN
         (
@@ -6584,7 +6601,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309030101" group BY v.id
+            WHERE p.unit_id="1031774" group BY v.id
         ) masaran1 ON masaran1.id=a.id
         LEFT JOIN
         (
@@ -6596,7 +6613,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309040102" group BY v.id
+            WHERE p.unit_id="1031773" group BY v.id
         ) masaran2 ON masaran2.id=a.id
         LEFT JOIN
         (
@@ -6608,7 +6625,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309040201" group BY v.id
+            WHERE p.unit_id="1031775" group BY v.id
         ) kedawung1 ON kedawung1.id=a.id
         LEFT JOIN
         (
@@ -6620,7 +6637,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309050201" group BY v.id
+            WHERE p.unit_id="1031776" group BY v.id
         ) kedawung2 ON kedawung2.id=a.id
         LEFT JOIN
         (
@@ -6632,7 +6649,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309050202" group BY v.id
+            WHERE p.unit_id="1031777" group BY v.id
         ) sambirejo ON sambirejo.id=a.id
         LEFT JOIN
         (
@@ -6644,7 +6661,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309060201" group BY v.id
+            WHERE p.unit_id="1031778" group BY v.id
         ) gondang ON gondang.id=a.id
         LEFT JOIN
         (
@@ -6656,7 +6673,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309070201" group BY v.id
+            WHERE p.unit_id="1031779" group BY v.id
         ) sambungmacan1 ON sambungmacan1.id=a.id
         LEFT JOIN
         (
@@ -6668,7 +6685,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309080102" group BY v.id
+            WHERE p.unit_id="1031780" group BY v.id
         ) sambungmacan2 ON sambungmacan2.id=a.id
         LEFT JOIN
         (
@@ -6680,7 +6697,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309090201" group BY v.id
+            WHERE p.unit_id="1031781" group BY v.id
         ) ngrampal ON ngrampal.id=a.id
         LEFT JOIN
         (
@@ -6692,7 +6709,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309090202" group BY v.id
+            WHERE p.unit_id="1031782" group BY v.id
         ) karangmalang ON karangmalang.id=a.id
         LEFT JOIN
         (
@@ -6704,7 +6721,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309100201" group BY v.id
+            WHERE p.unit_id="1031783" group BY v.id
         ) sragen ON sragen.id=a.id
         LEFT JOIN
         (
@@ -6716,7 +6733,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309110101" group BY v.id
+            WHERE p.unit_id="1031784" group BY v.id
         ) sidoharjo ON sidoharjo.id=a.id
         LEFT JOIN
         (
@@ -6728,7 +6745,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309120101" group BY v.id
+            WHERE p.unit_id="1031785" group BY v.id
         ) tanon1 ON tanon1.id=a.id
         LEFT JOIN
         (
@@ -6740,7 +6757,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309130201" group BY v.id
+            WHERE p.unit_id="1031786" group BY v.id
         ) tanon2 ON tanon2.id=a.id
         LEFT JOIN
         (
@@ -6752,7 +6769,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309140101" group BY v.id
+            WHERE p.unit_id="1031787" group BY v.id
         ) gemolong ON gemolong.id=a.id
         LEFT JOIN
         (
@@ -6764,7 +6781,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309150101" group BY v.id
+            WHERE p.unit_id="1031788" group BY v.id
         ) miri ON miri.id=a.id
         LEFT JOIN
         (
@@ -6776,7 +6793,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309150202" group BY v.id
+            WHERE p.unit_id="1031789" group BY v.id
         ) sumberlawang ON sumberlawang.id=a.id
         LEFT JOIN
         (
@@ -6788,7 +6805,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309160101" group BY v.id
+            WHERE p.unit_id="1031790" group BY v.id
         ) mondokan ON mondokan.id=a.id
         LEFT JOIN
         (
@@ -6800,7 +6817,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309170101" group BY v.id
+            WHERE p.unit_id="1031791" group BY v.id
         ) sukodono ON sukodono.id=a.id
         LEFT JOIN
         (
@@ -6812,7 +6829,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309180101" group BY v.id
+            WHERE p.unit_id="1031792" group BY v.id
         ) gesi ON gesi.id=a.id
         LEFT JOIN
         (
@@ -6824,7 +6841,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309180102" group BY v.id
+            WHERE p.unit_id="1031793" group BY v.id
         ) tangen ON tangen.id=a.id
         LEFT JOIN
         (
@@ -6836,7 +6853,7 @@ class PeriodController extends Controller
             LEFT JOIN service s ON s.id=v.service_id
             LEFT JOIN period p ON p.id=a.period_id
             LEFT JOIN realization r ON r.activity_detail_id=e.id AND r.triwulan='.$id.'
-            WHERE p.unit_id="P3309190101" group BY v.id
+            WHERE p.unit_id="1031794" group BY v.id
         ) jenar ON jenar.id=a.id
         WHERE p.tahun='.$session['periodValue'].' AND p.aktif=1 AND p.detail=1
         ORDER BY id, komid';
@@ -7526,7 +7543,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309010101"
+                WHERE p.unit_id="1031770"
                 group BY s.id ORDER BY s.id
             ) kalijambe ON kalijambe.id=s.id
             LEFT JOIN 
@@ -7538,7 +7555,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309020101"
+                WHERE p.unit_id="1031771"
                 group BY s.id ORDER BY s.id
             ) plupuh1 ON plupuh1.id=s.id
             LEFT JOIN 
@@ -7550,7 +7567,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309020202"
+                WHERE p.unit_id="1031772"
                 group BY s.id ORDER BY s.id
             ) plupuh2 ON plupuh2.id=s.id
             LEFT JOIN 
@@ -7562,7 +7579,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309030101"
+                WHERE p.unit_id="1031774"
                 group BY s.id ORDER BY s.id
             ) masaran1 ON masaran1.id=s.id
             LEFT JOIN 
@@ -7574,7 +7591,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309040102"
+                WHERE p.unit_id="1031773"
                 group BY s.id ORDER BY s.id
             ) masaran2 ON masaran2.id=s.id
             LEFT JOIN 
@@ -7586,7 +7603,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309040201"
+                WHERE p.unit_id="1031775"
                 group BY s.id ORDER BY s.id
             ) kedawung1 ON kedawung1.id=s.id
             LEFT JOIN 
@@ -7598,7 +7615,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309050201"
+                WHERE p.unit_id="1031776"
                 group BY s.id ORDER BY s.id
             ) kedawung2 ON kedawung2.id=s.id
             LEFT JOIN 
@@ -7610,7 +7627,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309050202"
+                WHERE p.unit_id="1031777"
                 group BY s.id ORDER BY s.id
             ) sambirejo ON sambirejo.id=s.id
             LEFT JOIN 
@@ -7622,7 +7639,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309060201"
+                WHERE p.unit_id="1031778"
                 group BY s.id ORDER BY s.id
             ) gondang ON gondang.id=s.id
             LEFT JOIN 
@@ -7634,7 +7651,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309070201"
+                WHERE p.unit_id="1031779"
                 group BY s.id ORDER BY s.id
             ) sambungmacan1 ON sambungmacan1.id=s.id
             LEFT JOIN 
@@ -7646,7 +7663,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309080102"
+                WHERE p.unit_id="1031780"
                 group BY s.id ORDER BY s.id
             ) sambungmacan2 ON sambungmacan2.id=s.id
             LEFT JOIN 
@@ -7658,7 +7675,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309090201"
+                WHERE p.unit_id="1031781"
                 group BY s.id ORDER BY s.id
             ) ngrampal ON ngrampal.id=s.id
             LEFT JOIN 
@@ -7670,7 +7687,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309090202"
+                WHERE p.unit_id="1031782"
                 group BY s.id ORDER BY s.id
             ) karangmalang ON karangmalang.id=s.id
             LEFT JOIN 
@@ -7682,7 +7699,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309100201"
+                WHERE p.unit_id="1031783"
                 group BY s.id ORDER BY s.id
             ) sragen ON sragen.id=s.id
             LEFT JOIN 
@@ -7694,7 +7711,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309110101"
+                WHERE p.unit_id="1031784"
                 group BY s.id ORDER BY s.id
             ) sidoharjo ON sidoharjo.id=s.id
             LEFT JOIN 
@@ -7706,7 +7723,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309120101"
+                WHERE p.unit_id="1031785"
                 group BY s.id ORDER BY s.id
             ) tanon1 ON tanon1.id=s.id
             LEFT JOIN 
@@ -7718,7 +7735,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309130201"
+                WHERE p.unit_id="1031786"
                 group BY s.id ORDER BY s.id
             ) tanon2 ON tanon2.id=s.id
             LEFT JOIN 
@@ -7730,7 +7747,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309140101"
+                WHERE p.unit_id="1031787"
                 group BY s.id ORDER BY s.id
             ) gemolong ON gemolong.id=s.id
             LEFT JOIN 
@@ -7742,7 +7759,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309150101"
+                WHERE p.unit_id="1031788"
                 group BY s.id ORDER BY s.id
             ) miri ON miri.id=s.id
             LEFT JOIN 
@@ -7754,7 +7771,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309150202"
+                WHERE p.unit_id="1031789"
                 group BY s.id ORDER BY s.id
             ) sumberlawang ON sumberlawang.id=s.id
             LEFT JOIN 
@@ -7766,7 +7783,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309160101"
+                WHERE p.unit_id="1031790"
                 group BY s.id ORDER BY s.id
             ) mondokan ON mondokan.id=s.id
             LEFT JOIN 
@@ -7778,7 +7795,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309170101"
+                WHERE p.unit_id="1031791"
                 group BY s.id ORDER BY s.id
             ) sukodono ON sukodono.id=s.id
             LEFT JOIN 
@@ -7790,7 +7807,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309180101"
+                WHERE p.unit_id="1031792"
                 group BY s.id ORDER BY s.id
             ) gesi ON gesi.id=s.id
             LEFT JOIN 
@@ -7802,7 +7819,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309180102"
+                WHERE p.unit_id="1031793"
                 group BY s.id ORDER BY s.id
             ) tangen ON tangen.id=s.id
             LEFT JOIN 
@@ -7814,7 +7831,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309190101"
+                WHERE p.unit_id="1031794"
                 group BY s.id ORDER BY s.id
             ) jenar ON jenar.id=s.id
             WHERE g.tahun='.$session['periodValue'].' AND g.aktif=1 AND s.sub=0
@@ -7849,7 +7866,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309010101"
+                WHERE p.unit_id="1031770"
                 group BY v.id ORDER BY v.id
             ) kalijambe ON kalijambe.id=s.id
             LEFT JOIN 
@@ -7861,7 +7878,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309020101"
+                WHERE p.unit_id="1031771"
                 group BY v.id ORDER BY v.id
             ) plupuh1 ON plupuh1.id=s.id
             LEFT JOIN 
@@ -7873,7 +7890,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309020202"
+                WHERE p.unit_id="1031772"
                 group BY v.id ORDER BY v.id
             ) plupuh2 ON plupuh2.id=s.id
             LEFT JOIN 
@@ -7885,7 +7902,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309030101"
+                WHERE p.unit_id="1031774"
                 group BY v.id ORDER BY v.id
             ) masaran1 ON masaran1.id=s.id
             LEFT JOIN 
@@ -7897,7 +7914,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309040102"
+                WHERE p.unit_id="1031773"
                 group BY v.id ORDER BY v.id
             ) masaran2 ON masaran2.id=s.id
             LEFT JOIN 
@@ -7909,7 +7926,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309040201"
+                WHERE p.unit_id="1031775"
                 group BY v.id ORDER BY v.id
             ) kedawung1 ON kedawung1.id=s.id
             LEFT JOIN 
@@ -7921,7 +7938,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309050201"
+                WHERE p.unit_id="1031776"
                 group BY v.id ORDER BY v.id
             ) kedawung2 ON kedawung2.id=s.id
             LEFT JOIN 
@@ -7933,7 +7950,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309050202"
+                WHERE p.unit_id="1031777"
                 group BY v.id ORDER BY v.id
             ) sambirejo ON sambirejo.id=s.id
             LEFT JOIN 
@@ -7945,7 +7962,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309060201"
+                WHERE p.unit_id="1031778"
                 group BY v.id ORDER BY v.id
             ) gondang ON gondang.id=s.id
             LEFT JOIN 
@@ -7957,7 +7974,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309070201"
+                WHERE p.unit_id="1031779"
                 group BY v.id ORDER BY v.id
             ) sambungmacan1 ON sambungmacan1.id=s.id
             LEFT JOIN 
@@ -7969,7 +7986,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309080102"
+                WHERE p.unit_id="1031780"
                 group BY v.id ORDER BY v.id
             ) sambungmacan2 ON sambungmacan2.id=s.id
             LEFT JOIN 
@@ -7981,7 +7998,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309090201"
+                WHERE p.unit_id="1031781"
                 group BY v.id ORDER BY v.id
             ) ngrampal ON ngrampal.id=s.id
             LEFT JOIN 
@@ -7993,7 +8010,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309090202"
+                WHERE p.unit_id="1031782"
                 group BY v.id ORDER BY v.id
             ) karangmalang ON karangmalang.id=s.id
             LEFT JOIN 
@@ -8005,7 +8022,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309100201"
+                WHERE p.unit_id="1031783"
                 group BY v.id ORDER BY v.id
             ) sragen ON sragen.id=s.id
             LEFT JOIN 
@@ -8017,7 +8034,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309110101"
+                WHERE p.unit_id="1031784"
                 group BY v.id ORDER BY v.id
             ) sidoharjo ON sidoharjo.id=s.id
             LEFT JOIN 
@@ -8029,7 +8046,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309120101"
+                WHERE p.unit_id="1031785"
                 group BY v.id ORDER BY v.id
             ) tanon1 ON tanon1.id=s.id
             LEFT JOIN 
@@ -8041,7 +8058,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309130201"
+                WHERE p.unit_id="1031786"
                 group BY v.id ORDER BY v.id
             ) tanon2 ON tanon2.id=s.id
             LEFT JOIN 
@@ -8053,7 +8070,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309140101"
+                WHERE p.unit_id="1031787"
                 group BY v.id ORDER BY v.id
             ) gemolong ON gemolong.id=s.id
             LEFT JOIN 
@@ -8065,7 +8082,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309150101"
+                WHERE p.unit_id="1031788"
                 group BY v.id ORDER BY v.id
             ) miri ON miri.id=s.id
             LEFT JOIN 
@@ -8077,7 +8094,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309150202"
+                WHERE p.unit_id="1031789"
                 group BY v.id ORDER BY v.id
             ) sumberlawang ON sumberlawang.id=s.id
             LEFT JOIN 
@@ -8089,7 +8106,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309160101"
+                WHERE p.unit_id="1031790"
                 group BY v.id ORDER BY v.id
             ) mondokan ON mondokan.id=s.id
             LEFT JOIN 
@@ -8101,7 +8118,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309170101"
+                WHERE p.unit_id="1031791"
                 group BY v.id ORDER BY v.id
             ) sukodono ON sukodono.id=s.id
             LEFT JOIN 
@@ -8113,7 +8130,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309180101"
+                WHERE p.unit_id="1031792"
                 group BY v.id ORDER BY v.id
             ) gesi ON gesi.id=s.id
             LEFT JOIN 
@@ -8125,7 +8142,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309180102"
+                WHERE p.unit_id="1031793"
                 group BY v.id ORDER BY v.id
             ) tangen ON tangen.id=s.id
             LEFT JOIN 
@@ -8137,7 +8154,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309190101"
+                WHERE p.unit_id="1031794"
                 group BY v.id ORDER BY v.id
             ) jenar ON jenar.id=s.id
             WHERE g.tahun='.$session['periodValue'].' AND g.aktif=1 AND v.sub=1
@@ -8182,7 +8199,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309010101"
+                WHERE p.unit_id="1031770"
                 group BY v.id ORDER BY v.id
             ) kalijambe ON kalijambe.id=a.id
             LEFT JOIN 
@@ -8194,7 +8211,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309020101"
+                WHERE p.unit_id="1031771"
                 group BY v.id ORDER BY v.id
             ) plupuh1 ON plupuh1.id=a.id
             LEFT JOIN 
@@ -8206,7 +8223,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309020202"
+                WHERE p.unit_id="1031772"
                 group BY v.id ORDER BY v.id
             ) plupuh2 ON plupuh2.id=a.id
             LEFT JOIN 
@@ -8218,7 +8235,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309030101"
+                WHERE p.unit_id="1031774"
                 group BY v.id ORDER BY v.id
             ) masaran1 ON masaran1.id=a.id
             LEFT JOIN 
@@ -8230,7 +8247,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309040102"
+                WHERE p.unit_id="1031773"
                 group BY v.id ORDER BY v.id
             ) masaran2 ON masaran2.id=a.id
             LEFT JOIN 
@@ -8242,7 +8259,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309040201"
+                WHERE p.unit_id="1031775"
                 group BY v.id ORDER BY v.id
             ) kedawung1 ON kedawung1.id=a.id
             LEFT JOIN 
@@ -8254,7 +8271,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309050201"
+                WHERE p.unit_id="1031776"
                 group BY v.id ORDER BY v.id
             ) kedawung2 ON kedawung2.id=a.id
             LEFT JOIN 
@@ -8266,7 +8283,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309050202"
+                WHERE p.unit_id="1031777"
                 group BY v.id ORDER BY v.id
             ) sambirejo ON sambirejo.id=a.id
             LEFT JOIN 
@@ -8278,7 +8295,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309060201"
+                WHERE p.unit_id="1031778"
                 group BY v.id ORDER BY v.id
             ) gondang ON gondang.id=a.id
             LEFT JOIN 
@@ -8290,7 +8307,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309070201"
+                WHERE p.unit_id="1031779"
                 group BY v.id ORDER BY v.id
             ) sambungmacan1 ON sambungmacan1.id=a.id
             LEFT JOIN 
@@ -8302,7 +8319,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309080102"
+                WHERE p.unit_id="1031780"
                 group BY v.id ORDER BY v.id
             ) sambungmacan2 ON sambungmacan2.id=a.id
             LEFT JOIN 
@@ -8314,7 +8331,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309090201"
+                WHERE p.unit_id="1031781"
                 group BY v.id ORDER BY v.id
             ) ngrampal ON ngrampal.id=a.id
             LEFT JOIN 
@@ -8326,7 +8343,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309090202"
+                WHERE p.unit_id="1031782"
                 group BY v.id ORDER BY v.id
             ) karangmalang ON karangmalang.id=a.id
             LEFT JOIN 
@@ -8338,7 +8355,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309100201"
+                WHERE p.unit_id="1031783"
                 group BY v.id ORDER BY v.id
             ) sragen ON sragen.id=a.id
             LEFT JOIN 
@@ -8350,7 +8367,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309110101"
+                WHERE p.unit_id="1031784"
                 group BY v.id ORDER BY v.id
             ) sidoharjo ON sidoharjo.id=a.id
             LEFT JOIN 
@@ -8362,7 +8379,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309120101"
+                WHERE p.unit_id="1031785"
                 group BY v.id ORDER BY v.id
             ) tanon1 ON tanon1.id=a.id
             LEFT JOIN 
@@ -8374,7 +8391,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309130201"
+                WHERE p.unit_id="1031786"
                 group BY v.id ORDER BY v.id
             ) tanon2 ON tanon2.id=a.id
             LEFT JOIN 
@@ -8386,7 +8403,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309140101"
+                WHERE p.unit_id="1031787"
                 group BY v.id ORDER BY v.id
             ) gemolong ON gemolong.id=a.id
             LEFT JOIN 
@@ -8398,7 +8415,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309150101"
+                WHERE p.unit_id="1031788"
                 group BY v.id ORDER BY v.id
             ) miri ON miri.id=a.id
             LEFT JOIN 
@@ -8410,7 +8427,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309150202"
+                WHERE p.unit_id="1031789"
                 group BY v.id ORDER BY v.id
             ) sumberlawang ON sumberlawang.id=a.id
             LEFT JOIN 
@@ -8422,7 +8439,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309160101"
+                WHERE p.unit_id="1031790"
                 group BY v.id ORDER BY v.id
             ) mondokan ON mondokan.id=a.id
             LEFT JOIN 
@@ -8434,7 +8451,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309170101"
+                WHERE p.unit_id="1031791"
                 group BY v.id ORDER BY v.id
             ) sukodono ON sukodono.id=a.id
             LEFT JOIN 
@@ -8446,7 +8463,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309180101"
+                WHERE p.unit_id="1031792"
                 group BY v.id ORDER BY v.id
             ) gesi ON gesi.id=a.id
             LEFT JOIN 
@@ -8458,7 +8475,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309180102"
+                WHERE p.unit_id="1031793"
                 group BY v.id ORDER BY v.id
             ) tangen ON tangen.id=a.id
             LEFT JOIN 
@@ -8470,7 +8487,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309190101"
+                WHERE p.unit_id="1031794"
                 group BY v.id ORDER BY v.id
             ) jenar ON jenar.id=a.id
             WHERE g.tahun='.$session['periodValue'].' AND g.aktif=1 AND s.sub=0
@@ -8505,7 +8522,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309010101"
+                WHERE p.unit_id="1031770"
                 group BY v.id ORDER BY v.id
             ) kalijambe ON kalijambe.id=s.id
             LEFT JOIN 
@@ -8517,7 +8534,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309020101"
+                WHERE p.unit_id="1031771"
                 group BY v.id ORDER BY v.id
             ) plupuh1 ON plupuh1.id=s.id
             LEFT JOIN 
@@ -8529,7 +8546,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309020202"
+                WHERE p.unit_id="1031772"
                 group BY v.id ORDER BY v.id
             ) plupuh2 ON plupuh2.id=s.id
             LEFT JOIN 
@@ -8541,7 +8558,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309030101"
+                WHERE p.unit_id="1031774"
                 group BY v.id ORDER BY v.id
             ) masaran1 ON masaran1.id=s.id
             LEFT JOIN 
@@ -8553,7 +8570,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309040102"
+                WHERE p.unit_id="1031773"
                 group BY v.id ORDER BY v.id
             ) masaran2 ON masaran2.id=s.id
             LEFT JOIN 
@@ -8565,7 +8582,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309040201"
+                WHERE p.unit_id="1031775"
                 group BY v.id ORDER BY v.id
             ) kedawung1 ON kedawung1.id=s.id
             LEFT JOIN 
@@ -8577,7 +8594,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309050201"
+                WHERE p.unit_id="1031776"
                 group BY v.id ORDER BY v.id
             ) kedawung2 ON kedawung2.id=s.id
             LEFT JOIN 
@@ -8589,7 +8606,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309050202"
+                WHERE p.unit_id="1031777"
                 group BY v.id ORDER BY v.id
             ) sambirejo ON sambirejo.id=s.id
             LEFT JOIN 
@@ -8601,7 +8618,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309060201"
+                WHERE p.unit_id="1031778"
                 group BY v.id ORDER BY v.id
             ) gondang ON gondang.id=s.id
             LEFT JOIN 
@@ -8613,7 +8630,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309070201"
+                WHERE p.unit_id="1031779"
                 group BY v.id ORDER BY v.id
             ) sambungmacan1 ON sambungmacan1.id=s.id
             LEFT JOIN 
@@ -8625,7 +8642,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309080102"
+                WHERE p.unit_id="1031780"
                 group BY v.id ORDER BY v.id
             ) sambungmacan2 ON sambungmacan2.id=s.id
             LEFT JOIN 
@@ -8637,7 +8654,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309090201"
+                WHERE p.unit_id="1031781"
                 group BY v.id ORDER BY v.id
             ) ngrampal ON ngrampal.id=s.id
             LEFT JOIN 
@@ -8649,7 +8666,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309090202"
+                WHERE p.unit_id="1031782"
                 group BY v.id ORDER BY v.id
             ) karangmalang ON karangmalang.id=s.id
             LEFT JOIN 
@@ -8661,7 +8678,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309100201"
+                WHERE p.unit_id="1031783"
                 group BY v.id ORDER BY v.id
             ) sragen ON sragen.id=s.id
             LEFT JOIN 
@@ -8673,7 +8690,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309110101"
+                WHERE p.unit_id="1031784"
                 group BY v.id ORDER BY v.id
             ) sidoharjo ON sidoharjo.id=s.id
             LEFT JOIN 
@@ -8685,7 +8702,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309120101"
+                WHERE p.unit_id="1031785"
                 group BY v.id ORDER BY v.id
             ) tanon1 ON tanon1.id=s.id
             LEFT JOIN 
@@ -8697,7 +8714,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309130201"
+                WHERE p.unit_id="1031786"
                 group BY v.id ORDER BY v.id
             ) tanon2 ON tanon2.id=s.id
             LEFT JOIN 
@@ -8709,7 +8726,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309140101"
+                WHERE p.unit_id="1031787"
                 group BY v.id ORDER BY v.id
             ) gemolong ON gemolong.id=s.id
             LEFT JOIN 
@@ -8721,7 +8738,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309150101"
+                WHERE p.unit_id="1031788"
                 group BY v.id ORDER BY v.id
             ) miri ON miri.id=s.id
             LEFT JOIN 
@@ -8733,7 +8750,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309150202"
+                WHERE p.unit_id="1031789"
                 group BY v.id ORDER BY v.id
             ) sumberlawang ON sumberlawang.id=s.id
             LEFT JOIN 
@@ -8745,7 +8762,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309160101"
+                WHERE p.unit_id="1031790"
                 group BY v.id ORDER BY v.id
             ) mondokan ON mondokan.id=s.id
             LEFT JOIN 
@@ -8757,7 +8774,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309170101"
+                WHERE p.unit_id="1031791"
                 group BY v.id ORDER BY v.id
             ) sukodono ON sukodono.id=s.id
             LEFT JOIN 
@@ -8769,7 +8786,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309180101"
+                WHERE p.unit_id="1031792"
                 group BY v.id ORDER BY v.id
             ) gesi ON gesi.id=s.id
             LEFT JOIN 
@@ -8781,7 +8798,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309180102"
+                WHERE p.unit_id="1031793"
                 group BY v.id ORDER BY v.id
             ) tangen ON tangen.id=s.id
             LEFT JOIN 
@@ -8793,7 +8810,7 @@ class PeriodController extends Controller
                 LEFT JOIN service s ON s.id=v.service_id
                 LEFT JOIN program g ON g.id=s.program_id
                 LEFT JOIN period p ON p.id=a.period_id
-                WHERE p.unit_id="P3309190101"
+                WHERE p.unit_id="1031794"
                 group BY v.id ORDER BY v.id
             ) jenar ON jenar.id=s.id
             WHERE g.tahun='.$session['periodValue'].' AND g.aktif=1 AND v.sub=1
@@ -9285,8 +9302,7 @@ class PeriodController extends Controller
     public function actionGetPeriod()
     {
         $session = Yii::$app->session;
-        $session['periodValue'] = $_COOKIE['bulan'];
-        return $_COOKIE['bulan'];
+        $session['periodValue'] = $_COOKIE['tahun'];
     }
 
     public function actionExportxlsrak()

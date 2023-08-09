@@ -39,8 +39,9 @@ $session = Yii::$app->session;
             <?= $form->field($model, 'dept_sub_activity_data_id')->hiddenInput()->label(false) ?>
 
             <div class="row">
-                <div class="col-md-4">
-                    <?= $form->field($model, 'sumber_dana_id')->dropDownList( ArrayHelper::map(Sumberdana::find()->where($sd)->all(),'id','nama'), ['prompt'=>'Pilih'])->label('Sumber Dana') ?>
+                <div class="col-md-4">  
+                    <!-- where($sd) -->
+                    <?= $form->field($model, 'sumber_dana_id')->dropDownList( ArrayHelper::map(Sumberdana::find()->where(['id' => 1])->all(),'id','nama'), ['prompt'=>'Pilih'])->label('Sumber Dana') ?>
                 </div>
                 <!-- <div class="col-md-4 pull-right">
                     <?= $form->field($model, 'total_poa')->textInput(['maxlength' => true])->label('Total POA')->widget(\yii\widgets\MaskedInput::className(), [

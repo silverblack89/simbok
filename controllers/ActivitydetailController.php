@@ -143,10 +143,12 @@ class ActivitydetailController extends Controller
             'unit_id' => Yii::$app->user->identity->unit_id,
         ])->one();
 
-        if($status->modul_1!=="P") {
-            $session['status_poa'] = '';
-        }else{
-            $session['status_poa'] = 'disabled';
+        if(!empty($status)){
+            if($status->modul_1!=="P") {
+                $session['status_poa'] = '';
+            }else{
+                $session['status_poa'] = 'disabled';
+            }
         }
 
         $verification = Verification::find()->where([
@@ -422,10 +424,12 @@ class ActivitydetailController extends Controller
             'unit_id' => Yii::$app->user->identity->unit_id,
         ])->one();
 
-        if($status->modul_1!=="P") {
-            $session['status_poa'] = '';
-        }else{
-            $session['status_poa'] = 'disabled';
+        if(!empty($status)){
+            if($status->modul_1!=="P") {
+                $session['status_poa'] = '';
+            }else{
+                $session['status_poa'] = 'disabled';
+            }
         }
 
         $verification = Verification::find()->where([

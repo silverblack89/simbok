@@ -4,6 +4,8 @@ use yii\helpers\Html;
 // use yii\grid\GridView;
 use kartik\grid\GridView;
 use yii\helpers\Url;
+use yii\bootstrap\Modal;
+use yii\bootstrap\Button;
 use yii\web\Session;
 use app\models\Bok;
 use yii\helpers\ArrayHelper;
@@ -16,9 +18,11 @@ use yii\widgets\Pjax;
 $session = Yii::$app->session;
 $this->title = 'Data POA '.$namaUnit;
 if (Yii::$app->user->identity->group_id == 'ADM'){
+    $visible = true;
     // $this->params['breadcrumbs'][] = ['label' => 'Data POA Puskesmas '.$session['periodValue'], 'url' => ['period/list', 'period' => $session['periodValue']]];
     $this->params['breadcrumbs'][] = ['label' => $session['deptPeriodValue']. $session['poaLabel'], 'url' => ['deptperiod/list', 'period' => $session['deptPeriodValue']]];
 }else{
+    $visible = false;
     $this->params['breadcrumbs'][] = ['label' => 'POA '.$session['deptPeriodValue'], 'url' => ['deptperiod/create']];   
 }
 $this->params['breadcrumbs'][] = $this->title;
@@ -70,7 +74,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div style="overflow-x:auto; margin-top:10px">
 
-<?php Pjax::begin(['id' => 'week-all']) ?>
+<?php //Pjax::begin(['id' => 'week-all']) ?>
 <?= GridView::widget([
         'dataProvider' => $dataProvider,
         // 'filterModel' => $searchModel,
@@ -79,6 +83,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'showPageSummary' => true,
         'pageSummaryRowOptions' => ['class' => 'kv-page-summary success', 'style' => 'text-align:right'],
         'pjax' => true,
+        'pjaxSettings' =>[
+            'neverTimeout'=>true,
+            'options'=>[
+                'id'=>'week-all',
+            ]
+        ],  
         'striped' => true,
         'hover' => false,
         'panel' => ['type' => 'primary', 'heading' => 'Data POA ' .$session['poaLabel']],
@@ -257,15 +267,42 @@ $this->params['breadcrumbs'][] = $this->title;
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
             ],
+            // [
+            //     'label' => 'Seksi',
+            //     'attribute' => 'unit_id',
+            // ],
+
+            ['class' => 'yii\grid\ActionColumn',
+            'header' => 'Seksi',
+            'contentOptions' => ['style' => 'width: 5%;text-align:center'],
+            'template' => '{user}',
+            'visible' => $visible,
+            'buttons' => [
+                'user' => function ($url, $model) {
+                    // return Html::a('<span class="glyphicon glyphicon-pencil"></span> '.$model['unit_id'], array('deptsubactivitydata/update', 'id'=>$model['id'], 'modul' => 'new', 'mid' => 0), ['class'=>'btn btn-xs btn-warning custom_button']);
+                    return Html::button('<span class="glyphicon glyphicon-pencil"></span> '.$model['unit_id'], ['value' => Url::to(['deptsubactivitydata/update', 'id' => $model['id'], 'modul' => 'usr', 'mid' => 0]), 'title' => 'Ubah User', 'class' => 'showModalButton btn btn-xs btn-warning custom_button']);
+                },
+            ]
+        ],
 
             // ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
 
-<?php Pjax::end() ?>
+<?php //Pjax::end() ?>
 </div>
 
 <?php
+    Modal::begin([
+        // 'header'=>'<h4>Detail Kegiatan</h4>', 
+        'id'=>'modal',
+        'size'=>'modal-md',
+        'clientOptions' => ['backdrop' => 'static', 'keyboard' => FALSE],
+        // 'footer' => ''
+    ]);
+    echo "<div id='modalContent'></div>";
+    Modal::end();
+
     // You only need add this,
     // $this->registerJs('
     //     var gridview_id = ""; // specific gridview

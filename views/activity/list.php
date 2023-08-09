@@ -24,12 +24,29 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php
         if($session['poa'] == 'def'){
-            echo Progress::widget([
-                'bars' => [
-                    ['percent' => $session['prosentase'], 'label' => $session['prosentase'].'% dari Pagu BOK (RP. ' .number_format($session['pagu'], 0, ',', '.'). ')', 'options' => ['class' => $session['barColor']]],
-                ],
-                'options' => ['class' => $session['barStatus']]
-            ]);
+            if($session['pagu'] < 0){
+                echo Progress::widget([
+                    'bars' => [
+                        ['percent' => $session['prosentase'], 'label' => number_format((int)$session['prosentase'],0,',','.').'% dari Pagu BOK (Lebih RP. ' .number_format(abs($session['pagu']), 0, ',', '.'). ')', 'options' => ['class' => $session['barColor']]],
+                    ],
+                    'options' => ['class' => $session['barStatus']]
+                ]);
+            }   
+            elseif($session['pagu']> 0){
+                echo Progress::widget([
+                    'bars' => [
+                        ['percent' => $session['prosentase'], 'label' => number_format((int)$session['prosentase'],0,',','.').'% dari Pagu BOK (Kurang RP. ' .number_format($session['pagu'], 0, ',', '.'). ')', 'options' => ['class' => $session['barColor']]],
+                    ],
+                    'options' => ['class' => $session['barStatus']]
+                ]);
+            }else{
+                echo Progress::widget([
+                    'bars' => [
+                        ['percent' => $session['prosentase'], 'label' => $session['prosentase'].'% dari Pagu BOK', 'options' => ['class' => $session['barColor']]],
+                    ],
+                    'options' => ['class' => $session['barStatus']]
+                ]);
+            }
         }
 
         if($session['poa'] == 'perubahan'){
@@ -88,7 +105,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         if($session['poa'] == 'def'){
                             return Html::a('<span class="glyphicon glyphicon-check"></span> Proses', ['/activitydata/list', 'id'=>$model->id], ['class'=>'btn btn-xs btn-success btn-xs custom_button']);
                         }else{
-                            return Html::a('<span class="glyphicon glyphicon-check"></span> Proses Perubahan', ['/activitydataubah/list', 'id'=>$model->id], ['class'=>'btn btn-xs btn-success btn-xs custom_button']);
+                            return Html::a('<span class="glyphicon glyphicon-check"></span> Proses', ['/activitydata/list', 'id'=>$model->id], ['class'=>'btn btn-xs btn-success btn-xs custom_button']);
+                            // return Html::a('<span class="glyphicon glyphicon-check"></span> Proses Perubahan', ['/activitydataubah/list', 'id'=>$model->id], ['class'=>'btn btn-xs btn-success btn-xs custom_button']);
                         }
                     },
                 ]],

@@ -17,8 +17,8 @@ use yii\helpers\Url;
     ]); ?>
 
     <div class="row">
-        <div class="col-xs-4"></div>
-        <div class="col-xs-4">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-8">
             <?= $form->field($model, 'tahun')->dropDownList([ date('Y')-1 => date('Y')-1, date('Y') => date('Y'), date('Y')+1 => date('Y')+1, ]
             ,[
                 'id' => 'select', 
@@ -71,94 +71,94 @@ use yii\helpers\Url;
         ]);
         ?>
 
-            <?=                                      
-            ButtonDropdown::widget([
-                'encodeLabel' => false,
-                'label' => '<span class="glyphicon glyphicon-transfer"></span> Pergeseran',
-                'dropdown' => [
-                    'items' => [
-                        ['label' => \Yii::t('yii', 'Proses'),
-                            'linkOptions' => [
-                                'data' => [
-                                    'method' => 'POST',
-                                    // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
-                                ],
-                            ],
-                            'url' => Url::to(['']),
-                            'visible' => true,   // same as above
-                        ],
+            <?php                                      
+            // ButtonDropdown::widget([
+            //     'encodeLabel' => false,
+            //     'label' => '<span class="glyphicon glyphicon-transfer"></span> Pergeseran',
+            //     'dropdown' => [
+            //         'items' => [
+            //             ['label' => \Yii::t('yii', 'Proses'),
+            //                 'linkOptions' => [
+            //                     'data' => [
+            //                         'method' => 'POST',
+            //                         // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
+            //                     ],
+            //                 ],
+            //                 'url' => Url::to(['']),
+            //                 'visible' => true,   // same as above
+            //             ],
                         
-                        ['label' => \Yii::t('yii', 'Export Excel'),
-                            'linkOptions' => [
-                                'data' => [
-                                    'method' => 'POST',
-                                    // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
-                                ],
-                            ],
-                            'url' => Url::to(['']),
-                            'visible' => true,   // same as above
-                        ],
-                    ],
-                ],
-                'options' => ['class' => 'btn btn-lg btn-info custom_button', 'disabled' => 'disabled', 'style' => 'margin-top:5px !important'],
-            ]);
+            //             ['label' => \Yii::t('yii', 'Export Excel'),
+            //                 'linkOptions' => [
+            //                     'data' => [
+            //                         'method' => 'POST',
+            //                         // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
+            //                     ],
+            //                 ],
+            //                 'url' => Url::to(['']),
+            //                 'visible' => true,   // same as above
+            //             ],
+            //         ],
+            //     ],
+            //     'options' => ['class' => 'btn btn-lg btn-info custom_button', 'disabled' => 'disabled', 'style' => 'margin-top:5px !important'],
+            // ]);
             ?>
 
-            <?=                                      
-            ButtonDropdown::widget([
-                'encodeLabel' => false,
-                'label' => '<span class="glyphicon glyphicon-pencil"></span> Perubahan',
-                'dropdown' => [
-                    'items' => [
-                        ['label' => \Yii::t('yii', 'Proses'),
-                            'linkOptions' => [
-                                'data' => [
-                                    'method' => 'POST',
-                                    // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
-                                ],
-                            ],
-                            'url' => Url::to(['']),
-                            'visible' => true,   // same as above
-                        ],
+            <?php                                      
+            // ButtonDropdown::widget([
+            //     'encodeLabel' => false,
+            //     'label' => '<span class="glyphicon glyphicon-pencil"></span> Perubahan',
+            //     'dropdown' => [
+            //         'items' => [
+            //             ['label' => \Yii::t('yii', 'Proses'),
+            //                 'linkOptions' => [
+            //                     'data' => [
+            //                         'method' => 'POST',
+            //                         // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
+            //                     ],
+            //                 ],
+            //                 'url' => Url::to(['']),
+            //                 'visible' => true,   // same as above
+            //             ],
                         
-                        ['label' => \Yii::t('yii', 'Export Excel'),
-                            'linkOptions' => [
-                                'data' => [
-                                    'method' => 'POST',
-                                    // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
-                                ],
-                            ],
-                            'url' => Url::to(['']),
-                            'visible' => true,   // same as above
-                        ],
+            //             ['label' => \Yii::t('yii', 'Export Excel'),
+            //                 'linkOptions' => [
+            //                     'data' => [
+            //                         'method' => 'POST',
+            //                         // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
+            //                     ],
+            //                 ],
+            //                 'url' => Url::to(['']),
+            //                 'visible' => true,   // same as above
+            //             ],
 
-                        // ['label' => \Yii::t('yii', '_________________________________')],
+            //             // ['label' => \Yii::t('yii', '_________________________________')],
 
-                        ['label' => \Yii::t('yii', 'Capaian Kinerja dan Keuangan'),
-                            'linkOptions' => [
-                                'data' => [
-                                    'method' => 'POST',
-                                    // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
-                                ],
-                            ],
-                            'url' => Url::to(['exporttw']),
-                            'visible' => true,   // same as above
-                        ],
+            //             ['label' => \Yii::t('yii', 'Capaian Kinerja dan Keuangan'),
+            //                 'linkOptions' => [
+            //                     'data' => [
+            //                         'method' => 'POST',
+            //                         // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
+            //                     ],
+            //                 ],
+            //                 'url' => Url::to(['exporttw']),
+            //                 'visible' => true,   // same as above
+            //             ],
                         
-                        ['label' => \Yii::t('yii', 'Rincian Kegiatan Pemanfaatan BOK'),
-                            'linkOptions' => [
-                                'data' => [
-                                    'method' => 'POST',
-                                    // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
-                                ],
-                            ],
-                            'url' => Url::to(['']),
-                            'visible' => true,   // same as above
-                        ],
-                    ],
-                ],
-                'options' => ['class' => 'btn btn-lg btn-warning custom_button', 'disabled' => 'disabled', 'style' => 'margin-top:5px !important'],
-            ]);
+            //             ['label' => \Yii::t('yii', 'Rincian Kegiatan Pemanfaatan BOK'),
+            //                 'linkOptions' => [
+            //                     'data' => [
+            //                         'method' => 'POST',
+            //                         // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
+            //                     ],
+            //                 ],
+            //                 'url' => Url::to(['']),
+            //                 'visible' => true,   // same as above
+            //             ],
+            //         ],
+            //     ],
+            //     'options' => ['class' => 'btn btn-lg btn-warning custom_button', 'disabled' => 'disabled', 'style' => 'margin-top:5px !important'],
+            // ]);
             ?>
 
         <?=                                      

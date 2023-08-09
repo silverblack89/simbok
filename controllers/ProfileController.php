@@ -45,7 +45,7 @@ class ProfileController extends Controller
 
         $profile = Profile::find();
 
-        if (count($profile) === 0) {
+        if (empty($profile)) {
             return $this->redirect(['create']);
         }else{
             return $this->redirect(['update', 'id' => 1]);
@@ -73,7 +73,7 @@ class ProfileController extends Controller
     public function actionCreate()
     {
         $profile = Profile::find();
-        if (count($profile) === 0) {
+        if (empty($profile)) {
             $model = new Profile();
 
             if ($model->load(Yii::$app->request->post()) && $model->save()) {

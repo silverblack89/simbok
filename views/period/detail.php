@@ -482,7 +482,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'visible' => $visible,
             'buttons' => [
                 'rak' => function ($url, $model) {
-                    // return Html::a('<span class="glyphicon glyphicon-pencil"></span> Ubah', array('financialrealization/update', 'id'=>$model->id, 'real' => false), ['class'=>'btn btn-xs btn-warning custom_button']);
+                    // return Html::a('<span class="glyphicon glyphicon-pencil"></span> RAK', array('activitydetail/rak', 'id'=>$model['id']), ['class'=>'btn btn-xs btn-info custom_button']);
                     return Html::button('<span class="glyphicon glyphicon-pencil"></span> RAK', ['value' => Url::to(['activitydetail/rak', 'id' => $model['id']]), 'title' => 'Entri RAK', 'class' => 'showModalButton btn btn-xs btn-info custom_button']);
                 },
             ]

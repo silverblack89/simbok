@@ -91,68 +91,68 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]);
                 ?>
 
-                <?=                                      
-                ButtonDropdown::widget([
-                    'encodeLabel' => false,
-                    'label' => '<span class="glyphicon glyphicon-transfer"></span> Pergeseran',
-                    'dropdown' => [
-                        'items' => [
-                            ['label' => \Yii::t('yii', 'Buka Semua'),
-                                'linkOptions' => [
-                                    'data' => [
-                                        'method' => 'POST',
-                                        // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
-                                    ],
-                                ],
-                                'url' => Url::to(['unlockall', 'id' => 'G']),
-                                'visible' => true,   // same as above
-                            ],
-                            ['label' => \Yii::t('yii', 'Kunci Semua'),
-                                'linkOptions' => [
-                                    'data' => [
-                                        'method' => 'POST',
-                                        // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
-                                    ],
-                                ],
-                                'url' => Url::to(['lockall', 'id' => 'G']),
-                                'visible' => true,   // same as above
-                            ],
-                        ],
-                    ],
-                    'options' => ['class' => 'btn btn-md btn-danger custom_button'],
-                ]);
+                <?php                                     
+                // ButtonDropdown::widget([
+                //     'encodeLabel' => false,
+                //     'label' => '<span class="glyphicon glyphicon-transfer"></span> Pergeseran',
+                //     'dropdown' => [
+                //         'items' => [
+                //             ['label' => \Yii::t('yii', 'Buka Semua'),
+                //                 'linkOptions' => [
+                //                     'data' => [
+                //                         'method' => 'POST',
+                //                         // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
+                //                     ],
+                //                 ],
+                //                 'url' => Url::to(['unlockall', 'id' => 'G']),
+                //                 'visible' => true,   // same as above
+                //             ],
+                //             ['label' => \Yii::t('yii', 'Kunci Semua'),
+                //                 'linkOptions' => [
+                //                     'data' => [
+                //                         'method' => 'POST',
+                //                         // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
+                //                     ],
+                //                 ],
+                //                 'url' => Url::to(['lockall', 'id' => 'G']),
+                //                 'visible' => true,   // same as above
+                //             ],
+                //         ],
+                //     ],
+                //     'options' => ['class' => 'btn btn-md btn-danger custom_button'],
+                // ]);
                 ?>
 
-                <?=                                      
-                ButtonDropdown::widget([
-                    'encodeLabel' => false,
-                    'label' => '<span class="glyphicon glyphicon-pencil"></span> Perubahan',
-                    'dropdown' => [
-                        'items' => [
-                            ['label' => \Yii::t('yii', 'Buka Semua'),
-                                'linkOptions' => [
-                                    'data' => [
-                                        'method' => 'POST',
-                                        // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
-                                    ],
-                                ],
-                                'url' => Url::to(['unlockall', 'id' => 'R']),
-                                'visible' => true,   // same as above
-                            ],
-                            ['label' => \Yii::t('yii', 'Kunci Semua'),
-                                'linkOptions' => [
-                                    'data' => [
-                                        'method' => 'POST',
-                                        // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
-                                    ],
-                                ],
-                                'url' => Url::to(['lockall', 'id' => 'R']),
-                                'visible' => true,   // same as above
-                            ],
-                        ],
-                    ],
-                    'options' => ['class' => 'btn btn-md btn-warning custom_button'],
-                ]);
+                <?php                                      
+                // ButtonDropdown::widget([
+                //     'encodeLabel' => false,
+                //     'label' => '<span class="glyphicon glyphicon-pencil"></span> Perubahan',
+                //     'dropdown' => [
+                //         'items' => [
+                //             ['label' => \Yii::t('yii', 'Buka Semua'),
+                //                 'linkOptions' => [
+                //                     'data' => [
+                //                         'method' => 'POST',
+                //                         // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
+                //                     ],
+                //                 ],
+                //                 'url' => Url::to(['unlockall', 'id' => 'R']),
+                //                 'visible' => true,   // same as above
+                //             ],
+                //             ['label' => \Yii::t('yii', 'Kunci Semua'),
+                //                 'linkOptions' => [
+                //                     'data' => [
+                //                         'method' => 'POST',
+                //                         // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
+                //                     ],
+                //                 ],
+                //                 'url' => Url::to(['lockall', 'id' => 'R']),
+                //                 'visible' => true,   // same as above
+                //             ],
+                //         ],
+                //     ],
+                //     'options' => ['class' => 'btn btn-md btn-warning custom_button'],
+                // ]);
                 ?>
 
                 <?=                                 
