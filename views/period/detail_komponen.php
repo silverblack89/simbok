@@ -16,6 +16,14 @@ use yii\widgets\Pjax;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $session = Yii::$app->session;
+if(Yii::$app->user->identity->group_id == 'PKM'){
+    $disabled = true;
+    unset($session['puskesmas']);
+    $session['puskesmas'] = substr(Yii::$app->user->identity->alias,10);
+}else{
+    $disabled = false;
+}
+
 $this->title = 'Detail per Komponen';
 if (Yii::$app->user->identity->unit_id == 'DINKES'){
     $this->params['breadcrumbs'][] = ['label' => 'Data POA Puskesmas '.$session['periodValue'], 'url' => ['period/list', 'period' => $session['periodValue']]];
@@ -34,70 +42,71 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="panel-body">
             <div class="row">
                 <p>
-                <div class="col-sm-3">
-                    <?= Html::dropDownList('puskesmas', null, ArrayHelper::map(Unit::find()->where(['IS NOT', 'kecamatan', NULL])->orderBy('puskesmas')->all(),'puskesmas','puskesmas' ),
-                                                            [
-                                                                'id' => 'puskesmas',
-                                                                'options'=>[$session['puskesmas']=>['Selected'=>true]],
-                                                                'prompt'=>'Pilih Puskesmas',
-                                                                'class'=>'form-control'
-                                                            ]);
-                    ?>  
-                </div>
+                    <div class="col-sm-3">
+                        <?= Html::dropDownList('puskesmas', null, ArrayHelper::map(Unit::find()->where(['IS NOT', 'kecamatan', NULL])->orderBy('puskesmas')->all(),'puskesmas','puskesmas' ),
+                            [
+                                'id' => 'puskesmas',
+                                'options'=>[$session['puskesmas']=>['Selected'=>true]],
+                                'prompt'=>'Pilih Puskesmas',
+                                'class'=>'form-control',
+                                'disabled' => $disabled
+                            ]);
+                        ?>  
+                    </div>
                 </p>
             </div>
             <div class="row">
                 <p>
-                <div class="col-sm-11">
-                    <?= Html::dropDownList('komponen', null, ArrayHelper::map(Service::find()
-                                                                            ->select('service.*')
-                                                                            ->leftJoin('program', '`program`.`id` = `service`.`program_id`')
-                                                                            ->where(['program.tahun' => $session['periodValue'], 'program.aktif' => 1])
-                                                                            ->with('program')
-                                                                            ->all(),'id','nama_pelayanan' ),
-                                                            [
-                                                                'id' => 'komponen',
-                                                                'options'=>[$session['komponen']=>['Selected'=>true]],
-                                                                'prompt'=>'Pilih Komponen',
-                                                                'onchange'=>'$.post( "'.Yii::$app->urlManager->createUrl('period/get-activity?id=').'"+$(this).val(), 
-                                                                            function( data ) {
-                                                                                // alert(data);
-                                                                                $( "select#subkomponen" ).html( data );
-                                                                            });', 
-                                                                'class'=>'form-control'
-                                                            ]);
-                    ?>  
-                </div>
+                    <div class="col-sm-11">
+                        <?= Html::dropDownList('komponen', null, ArrayHelper::map(Service::find()
+                            ->select('service.*')
+                            ->leftJoin('program', '`program`.`id` = `service`.`program_id`')
+                            ->where(['program.tahun' => $session['periodValue'], 'program.aktif' => 1])
+                            ->with('program')
+                            ->all(),'id','nama_pelayanan' ),
+                            [
+                                'id' => 'komponen',
+                                'options'=>[$session['komponen']=>['Selected'=>true]],
+                                'prompt'=>'Pilih Komponen',
+                                'onchange'=>'$.post( "'.Yii::$app->urlManager->createUrl('period/get-activity?id=').'"+$(this).val(), 
+                                            function( data ) {
+                                                // alert(data);
+                                                $( "select#subkomponen" ).html( data );
+                                            });', 
+                                'class'=>'form-control'
+                            ]);
+                        ?>  
+                    </div>
                 </p>
             </div>
             <div class="row">
                 <p>
-                <div class="col-sm-11">
-                    <?php if(isset($session['subkomponen'])){?>
-                        <?= Html::dropDownList('subkomponen', null, ArrayHelper::map(Activity::find()->where(['service_id' => $session['komponen']])->all(),'id','nama_kegiatan' ),
-                                                                [
-                                                                    'id' => 'subkomponen',
-                                                                    'options'=>[$session['subkomponen']=>['Selected'=>true]],
-                                                                    'prompt'=>'Pilih Sub Komponen',
-                                                                    'class'=>'form-control'
-                                                                ]);
-                        ?>  
-                    <?php }else{ ?>
-                        <?= Html::dropDownList('subkomponen', null, [],
-                                                                [
-                                                                    'id' => 'subkomponen',
-                                                                    'prompt'=>'Pilih Sub Komponen',
-                                                                    'class'=>'form-control'
-                                                                ]);
-                        ?>  
-                    <?php } ?>
-                </div>
+                    <div class="col-sm-11">
+                        <?php if(isset($session['subkomponen'])){?>
+                            <?= Html::dropDownList('subkomponen', null, ArrayHelper::map(Activity::find()->where(['service_id' => $session['komponen']])->all(),'id','nama_kegiatan' ),
+                                [
+                                    'id' => 'subkomponen',
+                                    'options'=>[$session['subkomponen']=>['Selected'=>true]],
+                                    'prompt'=>'Pilih Sub Komponen',
+                                    'class'=>'form-control'
+                                ]);
+                            ?>  
+                        <?php }else{ ?>
+                            <?= Html::dropDownList('subkomponen', null, [],
+                                [
+                                    'id' => 'subkomponen',
+                                    'prompt'=>'Pilih Sub Komponen',
+                                    'class'=>'form-control'
+                                ]);
+                            ?>  
+                        <?php } ?>
+                    </div>
                 </p>
                 <p>
-                <div class="col-lg-1 pull-right">
-                    <?= Html::a('<span class="glyphicon glyphicon-filter"></span> Proses', ['rekap-pkm-detail', 'cond' => 'fltr'], ['class' => 'btn btn-primary pull-right', 'id' => 'proses']) ?>
-                </div>
-                                                        </p>
+                    <div class="col-lg-1 pull-right">
+                        <?= Html::a('<span class="glyphicon glyphicon-filter"></span> Proses', ['rekap-pkm-detail', 'cond' => 'fltr'], ['class' => 'btn btn-primary pull-right', 'id' => 'proses']) ?>
+                    </div>
+                </p>
             </div>
         </div>
     </div>

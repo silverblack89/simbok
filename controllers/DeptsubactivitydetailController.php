@@ -192,7 +192,7 @@ class DeptsubactivitydetailController extends Controller
 
         $model->total =  $vol1*$vol2*$vol3*$vol4*$harga;
 
-        $deptsubactivitydata = Deptsubactivitydata::findOne($id);
+        $deptsubactivitydata = Deptsubactivitydata::findOne($model->dept_sub_activity_data_id);
         $deptaccountaccess = Deptaccountaccess::find()->where(['dept_sub_activity_id' => $deptsubactivitydata->dept_sub_activity_id])->all();
 
         if(!empty($deptaccountaccess)){

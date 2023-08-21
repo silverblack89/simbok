@@ -200,6 +200,16 @@ $session = Yii::$app->session;
                             'url' => Url::to(['exporttw']),
                             'visible' => false,   // same as above
                         ],
+                        ['label' => \Yii::t('yii', 'POA - Detail per Komponen'),
+                            'linkOptions' => [
+                                'data' => [
+                                    'method' => 'POST',
+                                    // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
+                                ],
+                            ],
+                            'url' => Url::to(['rekap-pkm-detail', 'cond' => 'def']),
+                            'visible' => true,   // same as above
+                        ],
                         ['label' => \Yii::t('yii', 'Data SP2D'),
                             'linkOptions' => [
                                 'data' => [

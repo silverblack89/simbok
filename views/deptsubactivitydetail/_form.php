@@ -56,7 +56,7 @@ $session = Yii::$app->session;
             </div>
 
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-12">
                     <?php if(!empty($akun)){ ?>
                         <?= $form->field($model, 'account_id')->dropDownList( ArrayHelper::map(Account::find()->where('id IN('.$akun.')')->orderBy('nama_rekening')->all(),'id','nama_rekening'),['prompt'=>'Pilih Rekening', 'disabled' => $disabled])->label('Jenis Rekening') ?>
                     <?php }else{ ?>
