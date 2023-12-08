@@ -5,17 +5,19 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\web\Session;
+use app\models\Program;
 use app\models\Service;
 use app\models\Activity;
 use app\models\Unit;
 use yii\helpers\ArrayHelper;
-use yii\widgets\Pjax;
+// use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ProgramSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $session = Yii::$app->session;
+
 if(Yii::$app->user->identity->group_id == 'PKM'){
     $disabled = true;
     unset($session['puskesmas']);
@@ -43,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <p>
                     <div class="col-sm-3">
-                        <?= Html::dropDownList('puskesmas', null, ArrayHelper::map(Unit::find()->where(['IS NOT', 'kecamatan', NULL])->orderBy('puskesmas')->all(),'puskesmas','puskesmas' ),
+                        <?= Html::dropDownList('puskesmas', null, ArrayHelper::map(Unit::find()->where(['<>', 'kecamatan', ""])->orderBy('puskesmas')->all(),'puskesmas','puskesmas' ),
                             [
                                 'id' => 'puskesmas',
                                 'options'=>[$session['puskesmas']=>['Selected'=>true]],
@@ -57,21 +59,21 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="row">
                 <p>
-                    <div class="col-sm-11">
-                        <?= Html::dropDownList('komponen', null, ArrayHelper::map(Service::find()
-                            ->select('service.*')
-                            ->leftJoin('program', '`program`.`id` = `service`.`program_id`')
-                            ->where(['program.tahun' => $session['periodValue'], 'program.aktif' => 1])
-                            ->with('program')
-                            ->all(),'id','nama_pelayanan' ),
+                    <div class="col-sm-10">
+                        <?= Html::dropDownList('program', null, ArrayHelper::map(Program::find()
+                                            ->select('program.*')
+                                            ->where(['program.tahun' => $session['periodValue'], 'program.aktif' => 1])
+                                            ->all(),'id','nama_program' ),
                             [
-                                'id' => 'komponen',
-                                'options'=>[$session['komponen']=>['Selected'=>true]],
-                                'prompt'=>'Pilih Komponen',
-                                'onchange'=>'$.post( "'.Yii::$app->urlManager->createUrl('period/get-activity?id=').'"+$(this).val(), 
+                                'id' => 'program',
+                                'options'=>[$session['program']=>['Selected'=>true]],
+                                'prompt'=>'Pilih Menu',
+                                'onchange'=>'$.post( "'.Yii::$app->urlManager->createUrl('period/get-service?id=').'"+$(this).val(), 
                                             function( data ) {
                                                 // alert(data);
-                                                $( "select#subkomponen" ).html( data );
+                                                $( "select#komponen" ).html( data );
+                                                $( "select#subkomponen" ).empty();
+                                                $( "select#subkomponen" ).append("<option>Pilih Komponen</option>");
                                             });', 
                                 'class'=>'form-control'
                             ]);
@@ -81,13 +83,32 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="row">
                 <p>
-                    <div class="col-sm-11">
+                    <div class="col-sm-10">
+                    <?= Html::dropDownList('komponen', null, ArrayHelper::map(Service::find()->where(['program_id' => $session['program']])->all(),'id','nama_pelayanan' ),
+                        [
+                            'id' => 'komponen',
+                            'options'=>[$session['komponen']=>['Selected'=>true]],
+                            'prompt'=>'Pilih Rincian',
+                            'onchange'=>'$.post( "'.Yii::$app->urlManager->createUrl('period/get-activity?id=').'"+$(this).val(), 
+                                        function( data ) {
+                                            // alert(data);
+                                            $( "select#subkomponen" ).html( data );
+                                        });', 
+                            'class'=>'form-control'
+                        ]);
+                    ?>  
+                    </div>
+                </p>
+            </div>
+            <div class="row">
+                <p>
+                    <div class="col-sm-10">
                         <?php if(isset($session['subkomponen'])){?>
                             <?= Html::dropDownList('subkomponen', null, ArrayHelper::map(Activity::find()->where(['service_id' => $session['komponen']])->all(),'id','nama_kegiatan' ),
                                 [
                                     'id' => 'subkomponen',
                                     'options'=>[$session['subkomponen']=>['Selected'=>true]],
-                                    'prompt'=>'Pilih Sub Komponen',
+                                    'prompt'=>'Pilih Komponen',
                                     'class'=>'form-control'
                                 ]);
                             ?>  
@@ -95,7 +116,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?= Html::dropDownList('subkomponen', null, [],
                                 [
                                     'id' => 'subkomponen',
-                                    'prompt'=>'Pilih Sub Komponen',
+                                    'prompt'=>'Pilih Komponen',
                                     'class'=>'form-control'
                                 ]);
                             ?>  
@@ -104,7 +125,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 </p>
                 <p>
                     <div class="col-lg-1 pull-right">
-                        <?= Html::a('<span class="glyphicon glyphicon-filter"></span> Proses', ['rekap-pkm-detail', 'cond' => 'fltr'], ['class' => 'btn btn-primary pull-right', 'id' => 'proses']) ?>
+                        <?= Html::a('<span class="glyphicon glyphicon-filter"></span> Proses', ['rekap-pkm-detail', 'cond' => 'fltr'], ['class' => 'btn btn-primary pull-right', 
+                        'id' => 'proses',
+                        'onchange'=>'
+                            $.pjax.reload({
+                                container: "#detail",
+                                timeout: false,
+                            });'
+                        ]) ?>
                     </div>
                 </p>
             </div>
@@ -120,7 +148,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php } ?>
 </p>
 
-<?php Pjax::begin(['id' => 'pjax-gridview']) ?>
+<?php //Pjax::begin(['id' => 'pjax-gridview']) ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         // 'filterModel' => $searchModel,
@@ -129,6 +157,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'showPageSummary' => true,
         'pageSummaryRowOptions' => ['class' => 'kv-page-summary success', 'style' => 'text-align:right'],
         'pjax' => true,
+        'pjaxSettings' =>[
+            'neverTimeout'=>true,
+            'options'=>[
+                'id'=>'detail',
+            ]
+        ],  
         'striped' => true,
         'hover' => false,
         'panel' => ['type' => 'primary', 'heading' => 'Data POA ' .$session['poaLabel']],
@@ -141,20 +175,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Puskesmas',
                 'group' => true,  // enable grouping
                 'contentOptions' => ['style' => 'font-size:11px;'],
-                'pageSummaryOptions' => ['colspan' => '14', 'append' => 'Total', 'style' => 'text-align:right'],
+                'pageSummaryOptions' => ['colspan' => '15', 'append' => 'Total', 'style' => 'text-align:right'],
                 'groupFooter' => function ($model, $key, $index, $widget) { // Closure method
                     return [
-                        'mergeColumns' => [[0,13]], // columns to merge in summary
+                        'mergeColumns' => [[0,14]], // columns to merge in summary
                         'content' => [             // content to show in each summary cell
-                            1 => 'Jumlah Komponen '.$model['nama_pelayanan'],
-                            14 => GridView::F_SUM,
+                            1 => 'Jumlah Puskesmas '.$model['puskesmas'],
+                            15 => GridView::F_SUM,
                         ],
                         'contentFormats' => [      // content reformatting for each summary cell
-                            14 => ['format' => 'number', 'decimals' => 0, 'decPoint'=>',', 'thousandSep'=>'.'],
+                            15 => ['format' => 'number', 'decimals' => 0, 'decPoint'=>',', 'thousandSep'=>'.'],
                         ],
                         'contentOptions' => [      // content html attributes for each summary cell
                             1 => ['style' => 'text-align:right'],
-                            14 => ['style' => 'font-size:11px; text-align:right'],
+                            15 => ['style' => 'font-size:11px; text-align:right'],
                         ],
                         // html attributes for group summary row
                         'options' => ['class' => 'info table-info','style' => 'font-weight:bold; text-align:right; font-size:11px;']
@@ -169,29 +203,35 @@ $this->params['breadcrumbs'][] = $this->title;
             // ],
             [
                 'attribute' => 'nama_kegiatan',
-                'label' => 'Kegiatan',
+                'label' => 'Komponen',
                 'group' => true,  // enable grouping
                 'subGroupOf' => 0,// supplier column index is the parent group,
                 'contentOptions' => ['style' => 'font-size:11px;'],
                 // 'pageSummaryOptions' => ['colspan' => '10', 'append' => 'Total', 'style' => 'text-align:right'],
                 'groupFooter' => function ($model, $key, $index, $widget) { // Closure method
                     return [
-                        'mergeColumns' => [[1,13]], // columns to merge in summary
+                        'mergeColumns' => [[1,14]], // columns to merge in summary
                         'content' => [             // content to show in each summary cell
-                            2 => 'Jumlah per Kegiatan',
-                            14 => GridView::F_SUM,
+                            2 => 'Jumlah per Komponen',
+                            15 => GridView::F_SUM,
                         ],
                         'contentFormats' => [      // content reformatting for each summary cell
-                            14 => ['format' => 'number', 'decimals' => 0, 'decPoint'=>',', 'thousandSep'=>'.'],
+                            15 => ['format' => 'number', 'decimals' => 0, 'decPoint'=>',', 'thousandSep'=>'.'],
                         ],
                         'contentOptions' => [      // content html attributes for each summary cell
                             2 => ['style' => 'text-align:right'],
-                            14 => ['style' => 'font-size:11px; text-align:right'],
+                            15 => ['style' => 'font-size:11px; text-align:right'],
                         ],
                         // html attributes for group summary row
                         'options' => ['class' => 'info table-info','style' => 'font-weight:bold; text-align:right; font-size:11px;']
                     ];
                 }
+            ],
+            [
+                'attribute' => 'sub_kegiatan',
+                'label' => 'Sub Kegiatan',
+                // 'group' => true,  // enable grouping
+                'contentOptions' => ['style' => 'font-size:11px;']
             ],
             [
                 'attribute' => 'bentuk_kegiatan',
@@ -315,12 +355,13 @@ $this->params['breadcrumbs'][] = $this->title;
             // ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
-<?php Pjax::end() ?>
+<?php //Pjax::end() ?>
 
 <?php
     $js=<<< JS
     $("#proses").on("click", function (e) {
         createCookie("puskesmas",document.getElementById("puskesmas").value, "1");
+        createCookie("program",document.getElementById("program").value, "1");
         createCookie("komponen",document.getElementById("komponen").value, "1");
         createCookie("subkomponen",document.getElementById("subkomponen").value, "1");
         baseUrl = window.origin;

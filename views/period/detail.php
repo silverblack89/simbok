@@ -6,6 +6,8 @@ use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use yii\web\Session;
+use yii\helpers\ArrayHelper;
+use app\models\Program;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ProgramSearch */
@@ -37,6 +39,22 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <h1></h1>
+<p>
+    <?= Html::dropDownList('menu', null, ArrayHelper::map(Program::find()->where(['tahun' => $session['periodValue']])
+                ->all(),'id','nama_program' ),
+        [
+            'id' => 'menu',
+            'options'=>[$session['menu_kegiatan']=>['Selected'=>true]],
+            'prompt'=>'Pilih Menu Kegiatan',
+            'onchange'=>'
+                $.pjax.reload({
+                    container: "#detail",
+                    timeout: false,
+                });',
+            'class'=>'form-control'
+        ]);
+    ?>  
+</p>
 <p>
     <?php if($session['poaLabel'] == ' Awal' && Yii::$app->user->identity->username !== 'admin'){ ?>
         <?php if (Yii::$app->user->identity->group_id == 'SEK'){ ?>
@@ -493,7 +511,37 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php 
     $this->registerJs('
+        $("#menu").on("change", function (e) {
+            createCookie("menu",document.getElementById("menu").value, "1");
+            createCookie("rak",document.getElementById("rak").value, "1");
+            baseUrl = window.origin;
+            if("'.Yii::$app->user->identity->group_id.'" == "PKM"){
+                var link = baseUrl+"'.Url::to(['datapoa', 'p' => 'def']).'";
+            }else{
+                var link = baseUrl+"'.Url::to(['datapoaadm', 'p' => 'def', 'id' => $id]).'";
+            }
+            $.get(link);
+
+            // Function to create the cookie 
+            function createCookie(name, value, days) { 
+                var expires; 
+                
+                if (days) { 
+                    var date = new Date(); 
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000)); 
+                    expires = "; expires=" + date.toGMTString(); 
+                } 
+                else { 
+                    expires = ""; 
+                } 
+                
+                document.cookie = escape(name) + "=" +  
+                    escape(value) + expires + "; path=/"; 
+            } 
+        });
+
         $("#rak").on("change", function (e) {
+            createCookie("menu",document.getElementById("menu").value, "1");
             createCookie("rak",document.getElementById("rak").value, "1");
             baseUrl = window.origin;
             if("'.Yii::$app->user->identity->group_id.'" == "PKM"){

@@ -112,4 +112,14 @@ class Deptsubactivitydata extends \yii\db\ActiveRecord
         return $this->hasOne(Dpa::className(), ['id' => 'dpa_id']);
     }
 
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $this->target = str_replace(".", "", $this->target);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

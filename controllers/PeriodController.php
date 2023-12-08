@@ -3292,41 +3292,41 @@ class PeriodController extends Controller
              
         }
 
-        $spreadsheet->getSecurity()->setLockWindows(true);
-        $spreadsheet->getSecurity()->setLockStructure(true);
-        $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
+        // $spreadsheet->getSecurity()->setLockWindows(true);
+        // $spreadsheet->getSecurity()->setLockStructure(true);
+        // $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
 
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setPassword('silverblack');
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSheet(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSort(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setInsertRows(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setFormatCells(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setPassword('silverblack');
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSort(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setInsertRows(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setFormatCells(true);
 
-        $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
 
-        $spreadsheet->setActiveSheetIndex(0);
+        // $spreadsheet->setActiveSheetIndex(0);
 
-        $spreadsheet->getSecurity()->setLockWindows(true);
-        $spreadsheet->getSecurity()->setLockStructure(true);
-        $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
+        // $spreadsheet->getSecurity()->setLockWindows(true);
+        // $spreadsheet->getSecurity()->setLockStructure(true);
+        // $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
 
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setPassword('silverblack');
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSheet(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSort(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setInsertRows(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setFormatCells(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setPassword('silverblack');
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSort(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setInsertRows(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setFormatCells(true);
 
-        $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
         
 
         $writer = new Xlsx($spreadsheet);
@@ -3938,41 +3938,41 @@ class PeriodController extends Controller
              
         }
 
-        $spreadsheet->getSecurity()->setLockWindows(true);
-        $spreadsheet->getSecurity()->setLockStructure(true);
-        $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
+        // $spreadsheet->getSecurity()->setLockWindows(true);
+        // $spreadsheet->getSecurity()->setLockStructure(true);
+        // $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
 
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setPassword('silverblack');
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSheet(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSort(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setInsertRows(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setFormatCells(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setPassword('silverblack');
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSort(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setInsertRows(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setFormatCells(true);
 
-        $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
 
-        $spreadsheet->setActiveSheetIndex(0);
+        // $spreadsheet->setActiveSheetIndex(0);
 
-        $spreadsheet->getSecurity()->setLockWindows(true);
-        $spreadsheet->getSecurity()->setLockStructure(true);
-        $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
+        // $spreadsheet->getSecurity()->setLockWindows(true);
+        // $spreadsheet->getSecurity()->setLockStructure(true);
+        // $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
 
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setPassword('silverblack');
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSheet(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSort(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setInsertRows(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setFormatCells(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setPassword('silverblack');
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSort(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setInsertRows(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setFormatCells(true);
 
-        $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
 
         $writer = new Xlsx($spreadsheet);
 
@@ -4980,41 +4980,41 @@ class PeriodController extends Controller
              
         }
 
-        $spreadsheet->getSecurity()->setLockWindows(true);
-        $spreadsheet->getSecurity()->setLockStructure(true);
-        $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
+        // $spreadsheet->getSecurity()->setLockWindows(true);
+        // $spreadsheet->getSecurity()->setLockStructure(true);
+        // $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
 
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setPassword('silverblack');
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSheet(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSort(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setInsertRows(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setFormatCells(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setPassword('silverblack');
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSort(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setInsertRows(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setFormatCells(true);
 
-        $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
 
-        $spreadsheet->setActiveSheetIndex(0);
+        // $spreadsheet->setActiveSheetIndex(0);
 
-        $spreadsheet->getSecurity()->setLockWindows(true);
-        $spreadsheet->getSecurity()->setLockStructure(true);
-        $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
+        // $spreadsheet->getSecurity()->setLockWindows(true);
+        // $spreadsheet->getSecurity()->setLockStructure(true);
+        // $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
 
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setPassword('silverblack');
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSheet(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setSort(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setInsertRows(true);
-        $spreadsheet->getActiveSheet()
-            ->getProtection()->setFormatCells(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setPassword('silverblack');
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setSort(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setInsertRows(true);
+        // $spreadsheet->getActiveSheet()
+        //     ->getProtection()->setFormatCells(true);
 
-        $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
         
 
         $writer = new Xlsx($spreadsheet);
@@ -5044,6 +5044,7 @@ class PeriodController extends Controller
     public function actionDatapoa($p)
     {
         $session = Yii::$app->session;
+        unset($session['menu']);
         unset($session['rak']);
         $POST_VARIABLE=Yii::$app->request->post('Period');
 
@@ -5062,7 +5063,13 @@ class PeriodController extends Controller
             $session['poaLabel'] = ' Perubahan';
         }
 
-        $query = 'SELECT e.id, g.nama_program, s.nama_pelayanan, v.nama_kegiatan,  IFNULL(a.bentuk_kegiatan, v.nama_kegiatan) bentuk_kegiatan, 
+        if(isset($_COOKIE['menu'])){
+            $session['menu_kegiatan'] = $_COOKIE['menu'];
+        }else{
+            $session['menu_kegiatan'] = '';
+        }
+
+        $query = 'SELECT e.id, g.nama_program, s.nama_pelayanan, v.id act_id, v.nama_kegiatan,  IFNULL(a.bentuk_kegiatan, v.nama_kegiatan) bentuk_kegiatan, 
         a.sasaran, a.target, a.lokasi, a.pelaksana, c.kode,
         c.nama_rekening, e.rincian, e.vol_1, e.satuan_1, 
         IFNULL(e.vol_2,"") vol_2, IFNULL(e.satuan_2,"") satuan_2, 
@@ -5077,7 +5084,7 @@ class PeriodController extends Controller
         LEFT JOIN program g ON g.id=s.program_id
         LEFT JOIN period p ON p.id=a.period_id
         LEFT JOIN account c ON c.id=e.account_id
-        WHERE p.unit_id="'.Yii::$app->user->identity->unit_id.'" AND p.tahun="'.$period.'"
+        WHERE p.unit_id="'.Yii::$app->user->identity->unit_id.'" AND p.tahun="'.$period.'" AND g.id LIKE "'.$session['menu_kegiatan'].'%"
         ORDER BY g.id, s.id, v.id, a.id';
 
         $session['qrypoa'] = $query;
@@ -5100,6 +5107,8 @@ class PeriodController extends Controller
             $rak = false;
             $session['rak'] = 0;
         }
+
+        $session['unitId'] = Yii::$app->user->identity->unit_id;
 
         return $this->render('detail', [
             'model' => $model,
@@ -5130,7 +5139,13 @@ class PeriodController extends Controller
             $session['poaLabel'] = ' Perubahan';
         }
 
-        $query = 'SELECT e.id, g.nama_program, s.nama_pelayanan, v.nama_kegiatan,  IFNULL(a.bentuk_kegiatan, v.nama_kegiatan) bentuk_kegiatan, 
+        if(isset($_COOKIE['menu'])){
+            $session['menu_kegiatan'] = $_COOKIE['menu'];
+        }else{
+            $session['menu_kegiatan'] = '';
+        }
+
+        $query = 'SELECT e.id, g.nama_program, s.nama_pelayanan, v.id act_id, v.nama_kegiatan,  IFNULL(a.bentuk_kegiatan, v.nama_kegiatan) bentuk_kegiatan, 
         a.sasaran, a.target, a.lokasi, a.pelaksana, c.kode,
         c.nama_rekening, e.rincian, e.vol_1, e.satuan_1, 
         IFNULL(e.vol_2,"") vol_2, IFNULL(e.satuan_2,"") satuan_2, 
@@ -5145,7 +5160,7 @@ class PeriodController extends Controller
         LEFT JOIN program g ON g.id=s.program_id
         LEFT JOIN period p ON p.id=a.period_id
         LEFT JOIN account c ON c.id=e.account_id
-        WHERE p.unit_id="'.$id.'" AND p.tahun="'.$period.'"
+        WHERE p.unit_id="'.$id.'" AND p.tahun="'.$period.'" AND g.id LIKE "'.$session['menu_kegiatan'].'%"
         ORDER BY g.id, s.id, v.id, a.id';
 
         $session['qrypoa'] = $query;
@@ -5171,6 +5186,7 @@ class PeriodController extends Controller
 
         $unit = Unit::findOne($id);
         $session['namaPkm'] = $unit->puskesmas;
+        $session['unitId'] = $id;
 
         return $this->render('detail', [
             'model' => $model,
@@ -5337,9 +5353,9 @@ class PeriodController extends Controller
             $count = count($dataExcel);
 
             $baseRowAwal = $baseRowAwal+1;
-            $activeSheet->setCellValue('A'.$baseRowProgram, '') 
-            ->setCellValue('C'.$baseRowProgram, $namapkm)
-            ->setCellValue('X'.$baseRowProgram, $dataprogram['total']);
+            // $activeSheet->setCellValue('A'.$baseRowProgram, '') 
+            // ->setCellValue('C'.$baseRowProgram, $namapkm)
+            // ->setCellValue('X'.$baseRowProgram, $dataprogram['total']);
 
             $spreadsheet->getActiveSheet()->mergeCells('C'.$baseRowProgram. ':W' .$baseRowProgram);
             $spreadsheet->getActiveSheet()->getStyle('A'.$baseRowProgram. ':X' .$baseRowProgram)->applyFromArray($styleArrayHeader);
@@ -5353,6 +5369,16 @@ class PeriodController extends Controller
             
             if ($count > 0) {
                 foreach($dataExcel as $rowExcel) {
+                    if($session['menu_kegiatan'] == ''){
+                        $activeSheet->setCellValue('A'.$baseRowProgram, '') 
+                        ->setCellValue('C'.$baseRowProgram, $namapkm)
+                        ->setCellValue('X'.$baseRowProgram, $dataprogram['total']);
+                    }else{
+                        $activeSheet->setCellValue('A'.$baseRowProgram, '') 
+                        ->setCellValue('C'.$baseRowProgram, $rowExcel['nama_program'])
+                        ->setCellValue('X'.$baseRowProgram, $dataprogram['total']);
+                    }
+
                     $jumlahkomponen = Yii::$app->db->createCommand('SELECT SUM(e.jumlah) total FROM export_program e
                     -- LEFT JOIN program p ON p.nama_program=e.nama_program AND p.tahun=:periodValue
                     where username=:username AND period=:periodValue and nama_pelayanan=:namaPelayanan')
@@ -5419,6 +5445,26 @@ class PeriodController extends Controller
                 $baseRowProgram++; 
             }
         }
+
+        if(Yii::$app->user->identity->username == 'admin'){
+            $unit = Unit::findOne($session['unitId']);
+        }else{
+            $unit = Unit::findOne(Yii::$app->user->identity->unit_id);
+        }
+
+        $baseRow = $baseRow+3;
+        $spreadsheet->getActiveSheet()->getStyle('Q:S')->getAlignment()->setHorizontal('center');
+        $activeSheet->setCellValue('Q'.$baseRow, 'Mengetahui,'); 
+        $spreadsheet->getActiveSheet()->getStyle('Q'.$baseRow. ':S' .$baseRow)->getFont()->setBold( true );
+        $baseRow=$baseRow+1;
+        $activeSheet->setCellValue('Q'.$baseRow, 'Kepala UPTD ' .Yii::$app->user->identity->alias); 
+        $spreadsheet->getActiveSheet()->getStyle('Q'.$baseRow. ':S' .$baseRow)->getFont()->setBold( true );
+        $baseRow=$baseRow+4;
+        $activeSheet->setCellValue('Q'.$baseRow, $unit->kepala); 
+        $spreadsheet->getActiveSheet()->getStyle('Q'.$baseRow. ':S' .$baseRow)->getFont()->setBold( true );
+        $baseRow=$baseRow+1;
+        $activeSheet->setCellValue('Q'.$baseRow, 'NIP. ' .$unit->nip_kepala);
+        $spreadsheet->getActiveSheet()->getStyle('Q'.$baseRow. ':S' .$baseRow)->getFont()->setBold( true );
 
         // $spreadsheet->getSecurity()->setLockWindows(true);
         // $spreadsheet->getSecurity()->setLockStructure(true);
@@ -7191,19 +7237,44 @@ class PeriodController extends Controller
         $session = Yii::$app->session;
         if($cond == 'def'){
             unset($session['puskesmas']);
+            unset($session['program']);
             unset($session['komponen']);
             unset($session['subkomponen']);
             $session['cond'] = $cond;
             // $session['puskesmas'] = $_COOKIE['puskesmas'];
-            $session['komponen'] = 0;
+            $session['program'] = 0;
+            // $session['komponen'] = 0;
+            $session['puskesmas'] = 'XXXX';
+            $prog = 'LIKE "%%"';
+            $kom = 'LIKE "%%"';
+            $subkom = 'LIKE "%%"';
         }else{
             $session['puskesmas'] = $_COOKIE['puskesmas'];
+
+            $session['program'] = $_COOKIE['program'];
+            if($_COOKIE['program'] == 'Pilih Menu' OR $_COOKIE['program'] == ''){
+                $prog = 'LIKE "%%"';
+            }else{
+                $prog = '= '.$_COOKIE['program'];
+            }
+
             $session['komponen'] = $_COOKIE['komponen'];
+            if($_COOKIE['komponen'] == 'Pilih Rincian' OR $_COOKIE['komponen'] == ''){
+                $kom = 'LIKE "%%"';
+            }else{
+                $kom = '= '.$_COOKIE['komponen'];
+            }
+
             $session['subkomponen'] = $_COOKIE['subkomponen'];
+            if($_COOKIE['subkomponen'] == 'Pilih Komponen' OR $_COOKIE['subkomponen'] == ''){
+                $subkom = 'LIKE "%%"';
+            }else{
+                $subkom = '= '.$_COOKIE['subkomponen'];
+            }
             $session['cond'] = $cond;
         }
         
-        $query = 'SELECT u.puskesmas, g.nama_program, s.nama_pelayanan, v.nama_kegiatan, IFNULL(a.bentuk_kegiatan, v.nama_kegiatan) bentuk_kegiatan, 
+        $query = 'SELECT u.puskesmas, g.nama_program, s.nama_pelayanan, v.nama_kegiatan, ad.nama sub_kegiatan, IFNULL(a.bentuk_kegiatan, v.nama_kegiatan) bentuk_kegiatan, 
         a.sasaran, a.target, a.lokasi, a.pelaksana, c.kode,
         c.nama_rekening, e.rincian, e.vol_1, e.satuan_1, 
         IFNULL(e.vol_2,"") vol_2, IFNULL(e.satuan_2,"") satuan_2, 
@@ -7213,6 +7284,7 @@ class PeriodController extends Controller
         e.unit_cost, e.jumlah
         FROM activity_detail e
         LEFT JOIN activity_data a ON a.id=e.activity_data_id
+        LEFT JOIN activity_data_sub ad ON ad.id=a.activity_data_sub_id
         LEFT JOIN activity v ON v.id=a.activity_id
         LEFT JOIN service s ON s.id=v.service_id
         LEFT JOIN program g ON g.id=s.program_id
@@ -7220,12 +7292,19 @@ class PeriodController extends Controller
         LEFT JOIN account c ON c.id=e.account_id
         LEFT JOIN unit u ON u.id=p.unit_id
         WHERE p.tahun="'.$session['periodValue'].'" 
-        AND s.id = "'.$session['komponen'].'" 
-        AND v.id LIKE "'.$session['subkomponen'].'%"
+        AND g.id '.$prog.'
+        AND s.id '.$kom.'
+        AND v.id '.$subkom.'
         AND u.puskesmas LIKE "%'.$session['puskesmas'].'"
         ORDER BY u.puskesmas, g.id, s.id, v.id, a.id';
 
+        // AND s.id = "'.$session['komponen'].'" 
+        // AND v.id LIKE "'.$session['subkomponen'].'%"
+        // AND u.puskesmas LIKE "%'.$session['puskesmas'].'"
+
         $session['qrydetail'] = $query;
+
+        // echo $query;
 
         $dataProvider = new SqlDataProvider([
             'sql' => $query,
@@ -7240,12 +7319,37 @@ class PeriodController extends Controller
             'dataProvider' => $dataProvider,
             'namaUnit' => Yii::$app->user->identity->alias
         ]);
+    }
 
-        // return $session['qrydetail'];
+    public function actionGetService($id)
+    {
+        $session = Yii::$app->session;
+        $session['program'] = $id;
+        $countActivity = Service::find()
+        ->where(['program_id' => $id])
+        ->count();
+        
+        $posts = Service::find()
+        ->where(['program_id' => $id])
+        // ->orderBy('nama_kegiatan ASC')
+        ->all();
+        
+        if($countActivity>0){
+            echo "<option>Pilih Rincian</option>";
+            foreach($posts as $post){
+            echo "<option value='".$post->id."'>".$post->nama_pelayanan."</option>";
+            }
+        }
+        else{
+            echo "<option>Pilih Rincian</option>";
+        }
     }
 
     public function actionGetActivity($id)
     {
+        $session = Yii::$app->session;
+        $session['komponen'] = $id;
+
         $countActivity = Activity::find()
         ->where(['service_id' => $id])
         ->count();
@@ -7256,13 +7360,13 @@ class PeriodController extends Controller
         ->all();
         
         if($countActivity>0){
-            echo "<option>Pilih Sub Komponen</option>";
+            echo "<option>Pilih Komponen</option>";
             foreach($posts as $post){
             echo "<option value='".$post->id."'>".$post->nama_kegiatan."</option>";
             }
         }
         else{
-            echo "<option>Pilih Sub Komponen</option>";
+            echo "<option>Pilih Komponen</option>";
         }
     }
 
@@ -7378,8 +7482,10 @@ class PeriodController extends Controller
         ];
 
         $service = Service::findOne($session['komponen']);
-        $activeSheet->setCellValue('A1', $service->nama_pelayanan);
-        $spreadsheet->getActiveSheet()->getStyle('A1')->applyFromArray($styleArrayBold);
+        if(!empty($service)){
+            $activeSheet->setCellValue('A1', $service->nama_pelayanan);
+            $spreadsheet->getActiveSheet()->getStyle('A1')->applyFromArray($styleArrayBold);
+        }
 
         $baseRowAwal = 0;
         $baseRowProgram = 4;

@@ -27,7 +27,7 @@ $session = Yii::$app->session;
             </div>
             <div class="panel-body">
                 <!-- <?= $form->field($model, 'dept_sub_activity_id')->hiddenInput()->label(false) ?> -->
-                <?= $form->field($model, 'dept_period_id')->dropDownList( ArrayHelper::map(DeptPeriod::find()->all(),'id','unit_id'))->label('Seksi') ?>
+                <?= $form->field($model, 'dept_period_id')->dropDownList( ArrayHelper::map(DeptPeriod::find()->where(['tahun' => $session['deptPeriodValue']])->all(),'id','unit_id'))->label('Seksi') ?>
                 <div class="form-group">
                     <?= Html::submitButton('<span class="glyphicon glyphicon-floppy-disk"></span> Simpan', ['class' => 'btn btn-success']) ?>
                 </div>

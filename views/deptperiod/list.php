@@ -302,6 +302,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'url' => Url::to(['rekap-dpa-detail', 'id' => 0]),
                                 'visible' => true,   // same as above
                             ],
+                            ['label' => \Yii::t('yii', 'RAB per Menu Kegiatan'),
+                                'url' => Url::to(['rekap-komponen-detail', 'id' => 0]),
+                                'visible' => true,   // same as above
+                            ],
                             ['label' => \Yii::t('yii', 'RKA APBD'),
                                 'url' => Url::to(['rka-apbd', 'cond' => 'def']),
                                 'visible' => true,   // same as above

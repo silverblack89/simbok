@@ -39,19 +39,19 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <div class="col-sm-11">
             <?= Html::dropDownList('komponen', null, ArrayHelper::map(Deptprogram::find()->where(['dept_program.tahun' => $session['deptPeriodValue'], 'dept_program.aktif' => 1])
-                                                                    ->all(),'id','nama_program' ),
-                                                    [
-                                                        'options'=>[$session['komponen']=>['Selected'=>true]],
-                                                        // 'style' => 'margin-top:5px !important;', 
-                                                        'prompt'=>'Pilih Upaya/Program',
-                                                        'onchange'=>'
-                                                            $.pjax.reload({
-                                                                url: "'.Url::to(['rekap-komponen-detail']).'?id="+$(this).val(),
-                                                                container: "#pjax-gridview",
-                                                                timeout: 1000,
-                                                            });',
-                                                        'class'=>'form-control'
-                                                    ]);
+                ->all(),'id','nama_program' ),
+                [
+                    'options'=>[$session['komponen']=>['Selected'=>true]],
+                    // 'style' => 'margin-top:5px !important;', 
+                    'prompt'=>'Pilih Menu Kegiatan',
+                    'onchange'=>'
+                        $.pjax.reload({
+                            url: "'.Url::to(['rekap-komponen-detail']).'?id="+$(this).val(),
+                            container: "#pjax-gridview",
+                            timeout: 1000,
+                        });',
+                    'class'=>'form-control'
+                ]);
             ?>  
         </div>
     </div>
@@ -74,24 +74,50 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             // ['class' => 'yii\grid\SerialColumn'],
             [
-                'attribute' => 'nama_sub_kegiatan',
-                'label' => 'Kegiatan',
+                'attribute' => 'nama_kegiatan',
+                'label' => 'Rincian Menu',
                 'group' => true,  // enable grouping
                 'contentOptions' => ['style' => 'font-size:11px;'],
-                'pageSummaryOptions' => ['colspan' => '13', 'append' => 'Total', 'style' => 'text-align:right'],
+                'pageSummaryOptions' => ['colspan' => '14', 'append' => 'Total', 'style' => 'text-align:right'],
                 'groupFooter' => function ($model, $key, $index, $widget) { // Closure method
                     return [
-                        'mergeColumns' => [[0,12]], // columns to merge in summary
+                        'mergeColumns' => [[0,13]], // columns to merge in summary
                         'content' => [             // content to show in each summary cell
-                            1 => 'Total per Kegiatan',
-                            13 => GridView::F_SUM,
+                            1 => 'Jumlah per Rincian Menu',
+                            14 => GridView::F_SUM,
                         ],
                         'contentFormats' => [      // content reformatting for each summary cell
-                            13 => ['format' => 'number', 'decimals' => 0, 'decPoint'=>',', 'thousandSep'=>'.'],
+                            14 => ['format' => 'number', 'decimals' => 0, 'decPoint'=>',', 'thousandSep'=>'.'],
                         ],
                         'contentOptions' => [      // content html attributes for each summary cell
                             1 => ['style' => 'text-align:right'],
-                            13 => ['style' => 'font-size:11px; text-align:right'],
+                            14 => ['style' => 'font-size:11px; text-align:right'],
+                        ],
+                        // html attributes for group summary row
+                        'options' => ['class' => 'info table-info','style' => 'font-weight:bold; text-align:right; font-size:11px;']
+                    ];
+                }
+            ],
+            [
+                'attribute' => 'nama_sub_kegiatan',
+                'label' => 'Komponen',
+                'group' => true,  // enable grouping
+                'subGroupOf' => 0,// supplier column index is the parent group
+                'contentOptions' => ['style' => 'font-size:11px;'],
+                // 'pageSummaryOptions' => ['colspan' => '13', 'append' => 'Total', 'style' => 'text-align:right'],
+                'groupFooter' => function ($model, $key, $index, $widget) { // Closure method
+                    return [
+                        'mergeColumns' => [[1,13]], // columns to merge in summary
+                        'content' => [             // content to show in each summary cell
+                            2 => 'Total per Komponen',
+                            14 => GridView::F_SUM,
+                        ],
+                        'contentFormats' => [      // content reformatting for each summary cell
+                            14 => ['format' => 'number', 'decimals' => 0, 'decPoint'=>',', 'thousandSep'=>'.'],
+                        ],
+                        'contentOptions' => [      // content html attributes for each summary cell
+                            2 => ['style' => 'text-align:right'],
+                            14 => ['style' => 'font-size:11px; text-align:right'],
                         ],
                         // html attributes for group summary row
                         'options' => ['class' => 'info table-info','style' => 'font-weight:bold; text-align:right; font-size:11px;']
@@ -113,28 +139,28 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'bentuk_kegiatan',
                 'label' => 'Bentuk Kegiatan',
-                'group' => true,  // enable grouping
-                'subGroupOf' => 0,// supplier column index is the parent group,
+                // 'group' => true,  // enable grouping
+                // 'subGroupOf' => 0,// supplier column index is the parent group,
                 'contentOptions' => ['style' => 'font-size:11px;'],
                 // 'pageSummaryOptions' => ['colspan' => '10', 'append' => 'Total', 'style' => 'text-align:right'],
-                'groupFooter' => function ($model, $key, $index, $widget) { // Closure method
-                    return [
-                        'mergeColumns' => [[1,12]], // columns to merge in summary
-                        'content' => [             // content to show in each summary cell
-                            2 => 'Jumlah per Bentuk Kegiatan',
-                            13 => GridView::F_SUM,
-                        ],
-                        'contentFormats' => [      // content reformatting for each summary cell
-                            13 => ['format' => 'number', 'decimals' => 0, 'decPoint'=>',', 'thousandSep'=>'.'],
-                        ],
-                        'contentOptions' => [      // content html attributes for each summary cell
-                            2 => ['style' => 'text-align:right'],
-                            13 => ['style' => 'font-size:11px; text-align:right'],
-                        ],
-                        // html attributes for group summary row
-                        'options' => ['class' => 'info table-info','style' => 'font-weight:bold; text-align:right; font-size:11px;']
-                    ];
-                }
+                // 'groupFooter' => function ($model, $key, $index, $widget) { // Closure method
+                //     return [
+                //         'mergeColumns' => [[1,12]], // columns to merge in summary
+                //         'content' => [             // content to show in each summary cell
+                //             2 => 'Jumlah per Bentuk Kegiatan',
+                //             13 => GridView::F_SUM,
+                //         ],
+                //         'contentFormats' => [      // content reformatting for each summary cell
+                //             13 => ['format' => 'number', 'decimals' => 0, 'decPoint'=>',', 'thousandSep'=>'.'],
+                //         ],
+                //         'contentOptions' => [      // content html attributes for each summary cell
+                //             2 => ['style' => 'text-align:right'],
+                //             13 => ['style' => 'font-size:11px; text-align:right'],
+                //         ],
+                //         // html attributes for group summary row
+                //         'options' => ['class' => 'info table-info','style' => 'font-weight:bold; text-align:right; font-size:11px;']
+                //     ];
+                // }
             ],
             // [
             //     'attribute' => 'sasaran',
@@ -247,6 +273,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'contentOptions' => ['style' => 'font-size:11px; text-align:right'],
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
+            ],
+            [
+                'attribute' => 'sub_dpa',
+                'label' => 'Sub Kegiatan DPA',
+                'contentOptions' => ['style' => 'font-size:11px;']
             ],
 
             // ['class' => 'yii\grid\ActionColumn'],

@@ -31,10 +31,10 @@ class Dpa extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['dept_sub_activity_id', 'tahun', 'nama', 'keterangan'], 'required'],
+            [['tahun', 'nama'], 'required'],
             [['dept_sub_activity_id'], 'integer'],
             [['tahun'], 'safe'],
-            [['nama'], 'string', 'max' => 100],
+            [['nama'], 'string', 'max' => 125],
             [['keterangan'], 'string'],
         ];
     }
