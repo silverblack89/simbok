@@ -295,7 +295,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'visible' => false,   // same as above
                             ],
                             ['label' => \Yii::t('yii', 'Detail per Komponen'),
-                                'url' => Url::to(['rekap-komponen-detail', 'id' => 0]),
+                                'url' => Url::to(['rekap-komponen-detail', 'cond' => 'def']),
                                 'visible' => true,   // same as above
                             ],
                             ['label' => \Yii::t('yii', 'Detail per Sub Kegiatan DPA'),
@@ -303,7 +303,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'visible' => true,   // same as above
                             ],
                             ['label' => \Yii::t('yii', 'RAB per Menu Kegiatan'),
-                                'url' => Url::to(['rekap-komponen-detail', 'id' => 0]),
+                                'url' => Url::to(['rekap-komponen-detail', 'cond' => 'def']),
                                 'visible' => true,   // same as above
                             ],
                             ['label' => \Yii::t('yii', 'RKA APBD'),
@@ -403,7 +403,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         //     ],
                                         // ],
                                         'url' => Url::to(['deptprogram/verif', 'id' => $model['unit_id'], 'p' => 'def']),
-                                        'visible' => true,   // same as above
+                                        'visible' => false,   // same as above
                                     ],
                                     
                                     ['label' => \Yii::t('yii', 'Lihat Data'),
@@ -490,10 +490,17 @@ $this->params['breadcrumbs'][] = $this->title;
             //     ],
             // ],
 
+            [
+                'label' => 'Realisasi',
+                'attribute' =>'persen',
+                'enableSorting' => false,
+                'contentOptions' => ['class' => 'col-lg-1 text-right']
+            ],
+
             // ['class' => 'yii\grid\ActionColumn'],
             ['class' => 'yii\grid\ActionColumn',
                 'contentOptions' => ['style' => $width],
-                'header'=>"Realisasi",
+                'header'=>"Tindakan",
                 'template' => $template,
                 'buttons' => [
                     'tw1' => function ($url, $model) {
@@ -520,7 +527,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
                                             ],
                                         ],
-                                        'url' => Url::to(['detailpoaadm', 'p' => 1, 'unit_id' => $model['unit_id'], 'sd' => '']),
+                                        // 'url' => Url::to(['detailpoaadm', 'p' => 1, 'unit_id' => $model['unit_id'], 'sd' => '']),
+                                        'url' => Url::to(['datarealadm', 'bok_id' => 1, 'unit_id' => $model['unit_id'], 'p' => 1]),
                                         'visible' => true,   // same as above
                                     ],
                                 ],
@@ -552,7 +560,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
                                             ],
                                         ],
-                                        'url' => Url::to(['detailpoaadm', 'p' => 2, 'unit_id' => $model['unit_id'], 'sd' => '']),
+                                        // 'url' => Url::to(['detailpoaadm', 'p' => 2, 'unit_id' => $model['unit_id'], 'sd' => '']),
+                                        'url' => Url::to(['datarealadm', 'bok_id' => 1, 'unit_id' => $model['unit_id'], 'p' => 2]),
                                         'visible' => true,   // same as above
                                     ],
                                 ],
@@ -584,7 +593,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
                                             ],
                                         ],
-                                        'url' => Url::to(['detailpoaadm', 'p' => 3, 'unit_id' => $model['unit_id'], 'sd' => '']),
+                                        // 'url' => Url::to(['detailpoaadm', 'p' => 3, 'unit_id' => $model['unit_id'], 'sd' => '']),
+                                        'url' => Url::to(['datarealadm', 'bok_id' => 1, 'unit_id' => $model['unit_id'], 'p' => 3]),
                                         'visible' => true,   // same as above
                                     ],
                                 ],
@@ -616,7 +626,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 // 'confirm' => \Yii::t('yii', 'Are you sure you want to delete this item?'),
                                             ],
                                         ],
-                                        'url' => Url::to(['detailpoaadm', 'p' => 4, 'unit_id' => $model['unit_id'], 'sd' => '']),
+                                        // 'url' => Url::to(['detailpoaadm', 'p' => 4, 'unit_id' => $model['unit_id'], 'sd' => '']),
+                                        'url' => Url::to(['datarealadm', 'bok_id' => 1, 'unit_id' => $model['unit_id'], 'p' => 4]),
                                         'visible' => true,   // same as above
                                     ],
                                 ],

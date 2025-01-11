@@ -5,12 +5,13 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\web\Session;
+use yii\helpers\ArrayHelper;
+// use yii\widgets\Pjax;
 use app\models\Program;
 use app\models\Service;
 use app\models\Activity;
 use app\models\Unit;
-use yii\helpers\ArrayHelper;
-// use yii\widgets\Pjax;
+use app\models\Activitydatasub;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ProgramSearch */
@@ -52,6 +53,21 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'prompt'=>'Pilih Puskesmas',
                                 'class'=>'form-control',
                                 'disabled' => $disabled
+                            ]);
+                        ?>  
+                    </div>
+                </p>
+            </div>
+            <div class="row">
+                <p>
+                    <div class="col-sm-10">
+                        <?= Html::dropDownList('submenu', null, ArrayHelper::map(Activitydatasub::find()->where(['tahun' => $session['periodValue']])
+                                            ->all(),'id','nama' ),
+                            [
+                                'id' => 'submenu',
+                                'options'=>[$session['submenu']=>['Selected'=>true]],
+                                'prompt'=>'Pilih Sub Kegiatan DPA',
+                                'class'=>'form-control'
                             ]);
                         ?>  
                     </div>
@@ -139,8 +155,9 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-    <?php if(Yii::$app->user->identity->username == 'admin'){ //$session['poaLabel'] == ' Awal' && ?> 
+    <?php if(Yii::$app->user->identity->username !== 'adminx'){ //$session['poaLabel'] == ' Awal' && ?> 
         <?= Html::a('<span class="glyphicon glyphicon-export"></span> Export', ['exportxlsdetail'], ['title' => 'Export Excel', 'class' => 'btn btn-default']) ?>
+        <?= Html::a('<span class="glyphicon glyphicon-export"></span> Export Desk', ['exportxlsdesk25'], ['title' => 'Export Excel Desk', 'class' => 'btn btn-success', 'id' => 'expdesk']) ?>
     <?php } ?>
 
     <?php if($session['poaLabel'] == ' Perubahan' && Yii::$app->user->identity->username == 'admin'){ ?>
@@ -359,8 +376,19 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php
     $js=<<< JS
+    $("#expdesk").on("click", function (e) {
+        if(document.getElementById("program").value == ''){
+            alert('Pilih Menu tidak boleh kosong!');
+            document.getElementById("program").focus();
+            return false;
+        }else{
+            return true;
+        }
+    });
+
     $("#proses").on("click", function (e) {
         createCookie("puskesmas",document.getElementById("puskesmas").value, "1");
+        createCookie("submenu",document.getElementById("submenu").value, "1");
         createCookie("program",document.getElementById("program").value, "1");
         createCookie("komponen",document.getElementById("komponen").value, "1");
         createCookie("subkomponen",document.getElementById("subkomponen").value, "1");

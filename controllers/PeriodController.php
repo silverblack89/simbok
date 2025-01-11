@@ -19,6 +19,7 @@ use app\models\ExportaccountSearch;
 use app\models\Profile;
 use app\models\User;
 use app\models\Status;
+use app\models\Program;
 use app\models\Service;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -7121,17 +7122,32 @@ class PeriodController extends Controller
     public function actionRekapRekening()
     {
         $session = Yii::$app->session;
-        $data = 'SELECT g.nama_program, v.nama_kegiatan, c.nama_rekening, IFNULL(SUM(e.vol_1),0) jml_vol_1, IFNULL(SUM(e.vol_2),0) jml_vol_2, IFNULL(SUM(e.vol_3),0) jml_vol_3, IFNULL(SUM(e.vol_4),0) jml_vol_4, SUM(e.jumlah) sub_total
-        FROM activity_detail e
-        LEFT JOIN activity_data a ON a.id=e.activity_data_id
-        LEFT JOIN activity v ON v.id=a.activity_id
-        LEFT JOIN service s ON s.id=v.service_id
-        LEFT JOIN program g ON g.id=s.program_id
-        LEFT JOIN period p ON p.id=a.period_id
-        LEFT JOIN account c ON c.id=e.account_id
-        WHERE p.tahun='.$session['periodValue'].'
-        group BY g.nama_program, v.nama_kegiatan, c.nama_rekening
-        ORDER BY g.id, v.id, c.id';
+
+        if(Yii::$app->user->identity->group_id == 'PKM'){
+            $data = 'SELECT g.nama_program, v.nama_kegiatan, c.nama_rekening, IFNULL(SUM(e.vol_1),0) jml_vol_1, IFNULL(SUM(e.vol_2),0) jml_vol_2, IFNULL(SUM(e.vol_3),0) jml_vol_3, IFNULL(SUM(e.vol_4),0) jml_vol_4, SUM(e.jumlah) sub_total
+            FROM activity_detail e
+            LEFT JOIN activity_data a ON a.id=e.activity_data_id
+            LEFT JOIN activity v ON v.id=a.activity_id
+            LEFT JOIN service s ON s.id=v.service_id
+            LEFT JOIN program g ON g.id=s.program_id
+            LEFT JOIN period p ON p.id=a.period_id
+            LEFT JOIN account c ON c.id=e.account_id
+            WHERE p.tahun='.$session['periodValue'].' AND p.unit_id='.Yii::$app->user->identity->unit_id.'
+            group BY g.nama_program, v.nama_kegiatan, c.nama_rekening
+            ORDER BY g.id, v.id, c.id';
+        }else{
+            $data = 'SELECT g.nama_program, v.nama_kegiatan, c.nama_rekening, IFNULL(SUM(e.vol_1),0) jml_vol_1, IFNULL(SUM(e.vol_2),0) jml_vol_2, IFNULL(SUM(e.vol_3),0) jml_vol_3, IFNULL(SUM(e.vol_4),0) jml_vol_4, SUM(e.jumlah) sub_total
+            FROM activity_detail e
+            LEFT JOIN activity_data a ON a.id=e.activity_data_id
+            LEFT JOIN activity v ON v.id=a.activity_id
+            LEFT JOIN service s ON s.id=v.service_id
+            LEFT JOIN program g ON g.id=s.program_id
+            LEFT JOIN period p ON p.id=a.period_id
+            LEFT JOIN account c ON c.id=e.account_id
+            WHERE p.tahun='.$session['periodValue'].'
+            group BY g.nama_program, v.nama_kegiatan, c.nama_rekening
+            ORDER BY g.id, v.id, c.id';
+        }
 
         $dataProvider = new SqlDataProvider([
             'sql' => $data,
@@ -7237,6 +7253,7 @@ class PeriodController extends Controller
         $session = Yii::$app->session;
         if($cond == 'def'){
             unset($session['puskesmas']);
+            unset($session['submenu']);
             unset($session['program']);
             unset($session['komponen']);
             unset($session['subkomponen']);
@@ -7245,11 +7262,19 @@ class PeriodController extends Controller
             $session['program'] = 0;
             // $session['komponen'] = 0;
             $session['puskesmas'] = 'XXXX';
+            $submenu = 'LIKE "%%"';
             $prog = 'LIKE "%%"';
             $kom = 'LIKE "%%"';
             $subkom = 'LIKE "%%"';
         }else{
             $session['puskesmas'] = $_COOKIE['puskesmas'];
+
+            $session['submenu'] = $_COOKIE['submenu'];
+            if($_COOKIE['submenu'] == 'Pilih Sub Kegiatan DPA' OR $_COOKIE['submenu'] == ''){
+                $submenu = 'LIKE "%%"';
+            }else{
+                $submenu = '= '.$_COOKIE['submenu'];
+            }
 
             $session['program'] = $_COOKIE['program'];
             if($_COOKIE['program'] == 'Pilih Menu' OR $_COOKIE['program'] == ''){
@@ -7292,6 +7317,7 @@ class PeriodController extends Controller
         LEFT JOIN account c ON c.id=e.account_id
         LEFT JOIN unit u ON u.id=p.unit_id
         WHERE p.tahun="'.$session['periodValue'].'" 
+        AND a.activity_data_sub_id '.$submenu.'
         AND g.id '.$prog.'
         AND s.id '.$kom.'
         AND v.id '.$subkom.'
@@ -7304,7 +7330,7 @@ class PeriodController extends Controller
 
         $session['qrydetail'] = $query;
 
-        // echo $query;
+        // return $query;
 
         $dataProvider = new SqlDataProvider([
             'sql' => $query,
@@ -9677,6 +9703,295 @@ class PeriodController extends Controller
         $writer = new Xlsx($spreadsheet);
 
         $filename = 'export_rak_rek_'.str_replace(' ','_',strtolower($namapkm)).'_'.$period.'.xlsx';
+
+        header('Content-Description: File Transfer');   
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.$filename.'"');
+        header('Cache-Control: max-age=0');
+        $writer->save('php://output');
+        exit;
+    }
+
+    public function actionExportxlsdesk25()
+    {
+        $session = Yii::$app->session;
+        $period = $session['periodValue'];
+
+        Yii::$app->db->createCommand('DELETE FROM export_program WHERE username=:username AND period=:periodValue ')
+        ->bindValue(':username', Yii::$app->user->identity->unit_id)
+        ->bindValue(':periodValue', $period)
+        ->execute();
+
+        $data = Yii::$app->db->createCommand($session['qrydetail'])
+        ->queryAll();
+
+        foreach ($data as $row) {
+            $exportprogram =  new Exportprogram();
+
+            $exportprogram->unit=$row['puskesmas']; $pkm = $row['puskesmas'];
+            $exportprogram->nama_program=$row['nama_program'];
+            $exportprogram->nama_pelayanan=$row['nama_pelayanan']; 
+            $exportprogram->nama_kegiatan=$row['nama_kegiatan']; 
+            $exportprogram->bentuk_kegiatan=$row['bentuk_kegiatan']; 
+            $exportprogram->sasaran=$row['sasaran'];
+            $exportprogram->target=$row['target'];
+            $exportprogram->lokasi=$row['lokasi'];
+            $exportprogram->pelaksana=$row['pelaksana'];
+
+            $exportprogram->rek=$row['kode'];
+            $exportprogram->nama_rekening=$row['nama_rekening'];
+            $exportprogram->rincian=$row['rincian'];
+
+            $exportprogram->vol_1=$row['vol_1'];
+            $exportprogram->satuan_1=$row['satuan_1'];
+            $exportprogram->vol_2=$row['vol_2'];
+            $exportprogram->satuan_2=$row['satuan_2'];
+
+            $exportprogram->vol_3=$row['vol_3'];
+            $exportprogram->satuan_3=$row['satuan_3'];
+            $exportprogram->vol_4=$row['vol_4'];
+            $exportprogram->satuan_4=$row['satuan_4'];
+
+            $exportprogram->vol=$row['vol'];
+            $exportprogram->unit_cost=$row['unit_cost'];
+            $exportprogram->jumlah=$row['jumlah'];
+            $exportprogram->username=Yii::$app->user->identity->unit_id;
+            $exportprogram->period=$period;
+            $exportprogram->save();
+        }
+
+        $inputFileName = Yii::getAlias('@app/views/exportaccount').'/_export_desk_25.xlsx';
+
+        /** Load $inputFileName to a Spreadsheet Object  **/
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($inputFileName);
+        // $spreadsheet = new Spreadsheet();
+        $activeSheet = $spreadsheet->getActiveSheet();
+
+        $styleArrayBold = [
+            'font' => [
+                'bold' => true,
+            ],
+        ];
+
+        $program = Program::findOne($session['program']);
+
+        $activeSheet->setCellValue('A2', $program->nama_program);
+        $activeSheet->setCellValue('A3', 'TAHUN ANGGARAN '.$session['periodValue']);
+        $spreadsheet->getActiveSheet()->getStyle('A1:A2')->applyFromArray($styleArrayBold);
+
+        $profile = Profile::find()->all();
+        foreach ($profile as $dataProfile);
+
+        $activeSheet->setCellValue('B5', ': '.$dataProfile->provinsi);
+        $activeSheet->setCellValue('B6', ': '.$dataProfile->nama.' '.$dataProfile->kota_kab);
+        $activeSheet->setCellValue('B7', ': ');
+
+        $activeSheet->setCellValue('B13', ': '.$program->nama_program);
+        $activeSheet->setCellValue('B14', ': ');
+        $activeSheet->setCellValue('B15', ': ');
+
+        $baseRowAwal = 22;
+
+        $styleArray = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ];
+
+        $rincimenu = Yii::$app->db->createCommand('SELECT e.nama_pelayanan, SUM(e.jumlah) jumlah FROM export_program e 
+        WHERE e.period=:period AND e.username=:username group BY e.nama_pelayanan ORDER BY e.id')
+        ->bindValue(':period', $period)
+        ->bindValue(':username', Yii::$app->user->identity->unit_id)
+        ->queryAll();
+
+        $urutrinci = 1;
+        foreach ($rincimenu as $rm) {
+            $activeSheet->setCellValue('A'.$baseRowAwal, $urutrinci.'. '.$rm['nama_pelayanan']);
+            $activeSheet->setCellValue('S'.$baseRowAwal, $rm['jumlah']);
+            $spreadsheet->getActiveSheet()->getStyle('A'.$baseRowAwal.':S'.$baseRowAwal)->applyFromArray($styleArrayBold);
+
+            $unit = Yii::$app->db->createCommand('SELECT e.unit FROM export_program e
+            WHERE e.period=:period AND e.nama_pelayanan=:pelayanan AND e.username=:username
+            group BY e.unit')
+            ->bindValue(':period', $period)
+            ->bindValue(':username', Yii::$app->user->identity->unit_id)
+            ->bindValue(':pelayanan', $rm['nama_pelayanan'])
+            ->queryAll();
+
+            $urutunit = 1;
+            $baseRowAwal = $baseRowAwal+1; 
+            foreach ($unit as $u) {
+                $activeSheet->setCellValue('B'.$baseRowAwal, $urutunit.'. Puskesmas '.$u['unit']);
+
+                $rekening = Yii::$app->db->createCommand('SELECT e.rek, e.nama_rekening FROM export_program e
+                WHERE e.period=:period AND e.nama_pelayanan=:pelayanan AND e.unit=:unit AND e.username=:username
+                group BY e.nama_rekening')
+                ->bindValue(':period', $period)
+                ->bindValue(':username', Yii::$app->user->identity->unit_id)
+                ->bindValue(':pelayanan', $rm['nama_pelayanan'])
+                ->bindValue(':unit', $u['unit'])
+                ->queryAll();
+
+                $baseRowAwal = $baseRowAwal+1; 
+                foreach ($rekening as $rk) {
+                    $activeSheet->setCellValue('A'.$baseRowAwal, $rk['rek']);
+                    $activeSheet->getStyle('A'.$baseRowAwal)->getAlignment()->setHorizontal('right'); 
+                    $activeSheet->setCellValue('B'.$baseRowAwal, $rk['nama_rekening']);
+
+                    $detail = Yii::$app->db->createCommand('SELECT e.nama_rekening, e.rincian, e.vol_1, e.satuan_1, e.vol_2, 
+                    e.satuan_2, e.vol_3, e.satuan_3, e.vol_4, e.satuan_4, e.vol, e.unit_cost, e.jumlah 
+                    FROM export_program e
+                    WHERE e.period=:period AND e.nama_pelayanan=:pelayanan AND e.unit=:unit AND e.nama_rekening=:rekening AND e.username=:username')
+                    ->bindValue(':period', $period)
+                    ->bindValue(':username', Yii::$app->user->identity->unit_id)
+                    ->bindValue(':pelayanan', $rm['nama_pelayanan'])
+                    ->bindValue(':unit', $u['unit'])
+                    ->bindValue(':rekening', $rk['nama_rekening'])
+                    ->queryAll();
+
+                    $baseRowAwal = $baseRowAwal+1; 
+                    foreach ($detail as $dt) {
+                        $activeSheet->setCellValue('B'.$baseRowAwal, '- '.$dt['rincian']);
+                        $activeSheet->setCellValue('C'.$baseRowAwal, $dt['vol_1']);
+                        $activeSheet->setCellValue('D'.$baseRowAwal, $dt['satuan_1']);
+                        $activeSheet->setCellValue('E'.$baseRowAwal, 'x');
+                        $activeSheet->setCellValue('F'.$baseRowAwal, $dt['vol_2']);
+                        $activeSheet->setCellValue('G'.$baseRowAwal, $dt['satuan_2']);
+                        $activeSheet->setCellValue('H'.$baseRowAwal, 'x');
+                        $activeSheet->setCellValue('I'.$baseRowAwal, $dt['vol_3']);
+                        $activeSheet->setCellValue('J'.$baseRowAwal, $dt['satuan_3']);
+                        $activeSheet->setCellValue('K'.$baseRowAwal, 'x');
+                        $activeSheet->setCellValue('L'.$baseRowAwal, $dt['vol_4']);
+                        $activeSheet->setCellValue('M'.$baseRowAwal, $dt['satuan_4']);
+                        $activeSheet->setCellValue('Q'.$baseRowAwal, $dt['vol']);
+                        $activeSheet->setCellValue('R'.$baseRowAwal, $dt['unit_cost']);
+                        $activeSheet->setCellValue('S'.$baseRowAwal, $dt['jumlah']);
+                        $baseRowAwal++; 
+                    }
+
+                    $baseRowAwal++;  
+                }
+
+                $urutunit++;
+                // $baseRowAwal++;  
+            }
+
+            $urutrinci++;
+            $baseRowAwal++;  
+        }
+
+    //     $styleArrayHeader = [
+    //         'font' => [
+    //             'bold' => true,
+    //         ],
+    //         'borders' => [
+    //             'allBorders' => [
+    //                 'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+    //             ],
+    //         ],
+    //     ];
+
+    //     foreach ($dataprogram as $dataprogram) {
+    //         $dataExcel = Yii::$app->db->createCommand('SELECT e.*, p.id FROM export_program e
+    //         LEFT JOIN dept_program p ON p.nama_program=e.nama_program AND p.tahun=:periodValue
+    //         where e.unit=:unitnya AND username=:username AND period=:periodValue')
+    //         ->bindValue(':username', Yii::$app->user->identity->unit_id)
+    //         ->bindValue(':periodValue', $period)
+    //         ->bindValue(':unitnya', $dataprogram['unit'])
+    //         ->queryAll();
+
+    //         $jumlahPkm = Yii::$app->db->createCommand('SELECT SUM(e.jumlah) total FROM export_program e
+    //         LEFT JOIN dept_program p ON p.nama_program=e.nama_program AND p.tahun=:periodValue
+    //         where e.unit=:unitnya AND username=:username AND period=:periodValue')
+    //         ->bindValue(':username', Yii::$app->user->identity->unit_id)
+    //         ->bindValue(':periodValue', $period)
+    //         ->bindValue(':unitnya', $dataprogram['unit'])
+    //         ->queryAll();
+
+    //         foreach($jumlahPkm as $jmlpkm);
+    //         // $exportprogram->jumlah_awal = $jmlpkm['total'];
+
+    //         $count = count($dataExcel);
+
+    //         $baseRowAwal = $baseRowAwal+1;
+    //         $activeSheet->setCellValue('A'.$baseRowProgram, $baseRowAwal) 
+    //         ->setCellValue('C'.$baseRowProgram, $dataprogram['unit'])
+    //         ->setCellValue('X'.$baseRowProgram, $jmlpkm['total']);
+
+    //         $spreadsheet->getActiveSheet()->mergeCells('C'.$baseRowProgram. ':W' .$baseRowProgram);
+    //         $spreadsheet->getActiveSheet()->getStyle('A'.$baseRowProgram. ':X' .$baseRowProgram)->applyFromArray($styleArrayHeader);
+    //         $activeSheet->getStyle('A'.$baseRowProgram. ':X' .$baseRowProgram)->getFill()
+    //         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+    //         ->getStartColor()->setARGB('9BC2E6');
+                 
+    //         $baseRowService = 0;
+    //         $baseRow = $baseRowProgram+1;
+            
+    //         if ($count > 0) {
+    //             foreach($dataExcel as $rowExcel) {
+    //                 $activeSheet->setCellValue('A'.$baseRow, '')
+    //                 ->setCellValue('B'.$baseRow, '')
+    //                 ->setCellValue('C'.$baseRow, $rowExcel['nama_kegiatan'])
+    //                 ->setCellValue('D'.$baseRow, $rowExcel['bentuk_kegiatan'])
+    //                 ->setCellValue('E'.$baseRow, $rowExcel['rek'])
+    //                 ->setCellValue('F'.$baseRow, $rowExcel['nama_rekening'])
+    //                 ->setCellValue('G'.$baseRow, $rowExcel['rincian'])
+    //                 ->setCellValue('H'.$baseRow, '')
+    //                 ->setCellValue('I'.$baseRow, $rowExcel['vol_1'])
+    //                 ->setCellValue('J'.$baseRow, $rowExcel['satuan_1'])
+    //                 ->setCellValue('K'.$baseRow, 'x')
+    //                 ->setCellValue('L'.$baseRow, $rowExcel['vol_2'])
+    //                 ->setCellValue('M'.$baseRow, $rowExcel['satuan_2'])
+    //                 ->setCellValue('N'.$baseRow, 'x')
+    //                 ->setCellValue('O'.$baseRow, $rowExcel['vol_3'])
+    //                 ->setCellValue('P'.$baseRow, $rowExcel['satuan_3'])
+    //                 ->setCellValue('Q'.$baseRow, 'x')
+    //                 ->setCellValue('R'.$baseRow, $rowExcel['vol_4'])
+    //                 ->setCellValue('S'.$baseRow, $rowExcel['satuan_4'])
+    //                 ->setCellValue('T'.$baseRow, '=')
+    //                 ->setCellValue('U'.$baseRow, $rowExcel['vol'])
+    //                 ->setCellValue('V'.$baseRow, $rowExcel['unit_cost'])
+    //                 ->setCellValue('W'.$baseRow, $rowExcel['jumlah'])
+    //                 ->setCellValue('X'.$baseRow, $rowExcel['jumlah_awal']);
+
+    //                 $spreadsheet->getActiveSheet()->getStyle('A'.$baseRow. ':X' .$baseRow)->applyFromArray($styleArray);
+    //                 $spreadsheet->getActiveSheet()->getStyle('A'.$baseRow. ':X' .$baseRow)->applyFromArray($styleArray)->getAlignment()->setVertical('top'); 
+    //                 $spreadsheet->getActiveSheet()->getStyle('A'.$baseRow. ':X' .$baseRow)->applyFromArray($styleArray)->getAlignment()->setWrapText(true);
+                                            
+    //                 $baseRow++;
+    //                 $baseRowService = $baseRowService+1;
+    //             }
+                
+    //             $baseRowProgram=$baseRowProgram+$baseRowService;
+    //             $baseRowProgram++;   
+    //         }else{  
+    //             $baseRowProgram++; 
+    //         }
+    //     }
+
+    //     // $spreadsheet->getSecurity()->setLockWindows(true);
+    //     // $spreadsheet->getSecurity()->setLockStructure(true);
+    //     // $spreadsheet->getSecurity()->setWorkbookPassword("silverblack");
+
+    //     // $spreadsheet->getActiveSheet()
+    //     //     ->getProtection()->setPassword('silverblack');
+    //     // $spreadsheet->getActiveSheet()
+    //     //     ->getProtection()->setSheet(true);
+    //     // $spreadsheet->getActiveSheet()
+    //     //     ->getProtection()->setSort(true);
+    //     // $spreadsheet->getActiveSheet()
+    //     //     ->getProtection()->setInsertRows(true);
+    //     // $spreadsheet->getActiveSheet()
+    //     //     ->getProtection()->setFormatCells(true);
+
+    //     // $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
+        
+
+        $writer = new Xlsx($spreadsheet);
+
+        $filename = 'export_desk_new_'.$period.'.xlsx';
 
         header('Content-Description: File Transfer');   
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

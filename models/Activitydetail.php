@@ -142,10 +142,56 @@ class Activitydetail extends \yii\db\ActiveRecord
             $this->unit_cost = str_replace(".", "", $this->unit_cost);
             $this->vol_1 = str_replace(".", "", $this->vol_1);
 
-            if ($this->vol_2 == null && $this->vol_3 == null && $this->vol_4 == null){
+            if ($this->vol_1 == null && $this->vol_2 == null && $this->vol_3 == null && $this->vol_4 == null){
+                $this->jumlah = str_replace(".", ",", $this->unit_cost);
+                $this->satuan_1 = null;
+                $this->satuan_2 = null;
+                $this->satuan_3 = null;
+                $this->satuan_4 = null;
+
+            }elseif ($this->vol_1 == null && $this->vol_2 == null && $this->vol_3 == null){
+                $this->jumlah = $this->vol_4 * str_replace(".", ",", $this->unit_cost);
+                $this->satuan_1 = null;
+                $this->satuan_2 = null;
+                $this->satuan_3 = null;
+
+            }elseif ($this->vol_2 == null && $this->vol_3 == null && $this->vol_4 == null){
                 $this->jumlah = $this->vol_1 * str_replace(".", ",", $this->unit_cost);
                 $this->satuan_2 = null;
                 $this->satuan_3 = null;
+                $this->satuan_4 = null;
+            
+            }elseif ($this->vol_1 == null && $this->vol_3 == null && $this->vol_4 == null){
+                $this->jumlah = $this->vol_2 * str_replace(".", ",", $this->unit_cost);
+                $this->satuan_1 = null;
+                $this->satuan_3 = null;
+                $this->satuan_4 = null;
+
+            }elseif ($this->vol_1 == null && $this->vol_2 == null && $this->vol_4 == null){
+                $this->jumlah = $this->vol_3 * str_replace(".", ",", $this->unit_cost);
+                $this->satuan_1 = null;
+                $this->satuan_2 = null;
+                $this->satuan_4 = null;
+
+            }elseif ($this->vol_1 == null && $this->vol_2 == null){
+                $this->vol_3 = str_replace(".", "", $this->vol_3);
+                $this->vol_4 = str_replace(".", "", $this->vol_4);
+                $this->jumlah = $this->vol_3 * $this->vol_4 * str_replace(".", "", $this->unit_cost);
+                $this->satuan_1 = null;
+                $this->satuan_2 = null;
+
+            }elseif ($this->vol_1 == null && $this->vol_3 == null){
+                $this->vol_2 = str_replace(".", "", $this->vol_2);
+                $this->vol_4 = str_replace(".", "", $this->vol_4);
+                $this->jumlah = $this->vol_2 * $this->vol_4 * str_replace(".", "", $this->unit_cost);
+                $this->satuan_1 = null;
+                $this->satuan_3 = null;
+
+            }elseif ($this->vol_1 == null && $this->vol_4 == null){
+                $this->vol_2 = str_replace(".", "", $this->vol_2);
+                $this->vol_3 = str_replace(".", "", $this->vol_3);
+                $this->jumlah = $this->vol_2 * $this->vol_3 * str_replace(".", "", $this->unit_cost);
+                $this->satuan_1 = null;
                 $this->satuan_4 = null;
 
             }elseif ($this->vol_3 == null && $this->vol_4 == null){
@@ -166,6 +212,13 @@ class Activitydetail extends \yii\db\ActiveRecord
                 $this->satuan_2 = null;
                 $this->satuan_3 = null;  
 
+            }elseif ($this->vol_1 == null){
+                $this->vol_2 = str_replace(".", "", $this->vol_2);
+                $this->vol_3 = str_replace(".", "", $this->vol_3);
+                $this->vol_4 = str_replace(".", "", $this->vol_4);
+                $this->jumlah = $this->vol_2 * $this->vol_3 * $this->vol_4 * str_replace(".", "", $this->unit_cost);
+                $this->satuan_1 = null;
+
             }elseif ($this->vol_2 == null){
                 $this->vol_3 = str_replace(".", "", $this->vol_3);
                 $this->vol_4 = str_replace(".", "", $this->vol_4);
@@ -185,6 +238,7 @@ class Activitydetail extends \yii\db\ActiveRecord
                 $this->satuan_4 = null;
 
             }else{
+                $this->vol_1 = str_replace(".", "", $this->vol_1);
                 $this->vol_2 = str_replace(".", "", $this->vol_2);
                 $this->vol_3 = str_replace(".", "", $this->vol_3);
                 $this->vol_4 = str_replace(".", "", $this->vol_4);

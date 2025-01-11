@@ -12,6 +12,8 @@ use app\models\Profile;
 use app\models\Deptstatus;
 use app\models\Deptprogram;
 use app\models\User;
+use app\models\Deptactivity;
+use app\models\Deptsubactivity;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -690,6 +692,159 @@ class DeptperiodController extends Controller
         ]);
 
         // return $query;
+    }
+
+    public function actionDatareal($id)
+    {
+        $session = Yii::$app->session;
+        $session['bok'] = $id;
+
+        $p = 'def';
+
+        if($p == 'def'){
+            $session['poa'] = 'def';
+            $session['poaLabel'] = ' Awal';
+        }elseif($p == 'pergeseran'){
+            $session['poa'] = 'pergeseran';
+            $session['poaLabel'] = ' Pergeseran';
+        }elseif($p == 'perubahan'){
+            $session['poa'] = 'perubahan';
+            $session['poaLabel'] = ' Perubahan';
+        }
+
+        $query = 'SELECT e.id, g.nama_program, v.nama_kegiatan, s.nama_sub_kegiatan, IFNULL(a.bentuk_kegiatan, s.nama_sub_kegiatan) bentuk_kegiatan, 
+        a.indikator_hasil, a.target_hasil, a.indikator_keluaran, a.target_keluaran, c.kode, c.nama_rekening, e.rincian,
+        e.vol_1, e.satuan_1, 
+        
+        IFNULL(e.vol_2,"") vol_2, IFNULL(e.satuan_2,"") satuan_2, 
+        IFNULL(e.vol_3,"") vol_3, IFNULL(e.satuan_3,"") satuan_3,
+        IFNULL(e.vol_4,"") vol_4, IFNULL(e.satuan_4,"") satuan_4,
+        vol_1*IFNULL(vol_2,1)*IFNULL(vol_3,1)*IFNULL(vol_4,1) vol, 
+        
+        e.unit_cost, e.jumlah, IFNULL(rl.realisasi,0) realisasi, e.jumlah-IFNULL(rl.realisasi,0) sisa
+        FROM dept_sub_activity_detail e
+        LEFT JOIN dept_sub_activity_data a ON a.id=e.dept_sub_activity_data_id
+        LEFT JOIN dept_sub_activity s ON s.id=a.dept_sub_activity_id
+        LEFT JOIN dept_activity v ON v.id=s.dept_activity_id
+        LEFT JOIN dept_program g ON g.id=v.dept_program_id
+        LEFT JOIN dept_period p ON p.id=a.dept_period_id
+        LEFT JOIN account c ON c.id=e.account_id
+        LEFT JOIN
+        (
+            SELECT d.dept_sub_activity_detail_id, SUM(d.jumlah) realisasi FROM dept_datareal d
+            group BY d.dept_sub_activity_detail_id 
+        ) rl ON rl.dept_sub_activity_detail_id=e.id
+        WHERE p.unit_id="'.Yii::$app->user->identity->username.'" AND p.tahun="'.$session['deptPeriodValue'].'" AND g.bok_id="'.$id.'"
+        ORDER BY g.id, s.id, v.id, a.id';
+
+        $session['qrypoa'] = $query;
+
+        $dataProvider = new SqlDataProvider([
+            'sql' => $query,
+            'pagination' => false
+        ]);
+
+        $model = $dataProvider->getModels();
+
+        return $this->render('datareal', [
+            'model' => $model,
+            'dataProvider' => $dataProvider,
+            'namaUnit' => Yii::$app->user->identity->alias,
+            'id' => $id,
+        ]);
+    }
+
+    public function actionDatarealadm($bok_id,$unit_id,$p)
+    {
+        $session = Yii::$app->session;
+        $session['bok'] = $bok_id;
+
+        if($p == 1){
+            $b1 = 1;
+            $b2 = 3;
+            $r = 'I';
+            $twprev = '-';
+        }
+
+        if($p == 2){
+            $b1 = 4;
+            $b2 = 6;
+            $r = 'II';
+            $twprev = 'Triwulan I';
+        }
+
+        if($p == 3){
+            $b1 = 7;
+            $b2 = 9;
+            $r = 'III';
+            $twprev = 'Triwulan I - II';
+        }
+
+        if($p == 4){
+            $b1 = 10;
+            $b2 = 12;
+            $r = 'IV';
+            $twprev = 'Triwulan I - III';
+        }
+
+        $session['triwulan'] = $p;
+        $session['label_tw'] = $twprev;
+
+        $query = 'SELECT e.id, g.nama_program, v.nama_kegiatan, s.nama_sub_kegiatan, IFNULL(a.bentuk_kegiatan, s.nama_sub_kegiatan) bentuk_kegiatan, 
+        a.indikator_hasil, a.target_hasil, a.indikator_keluaran, a.target_keluaran, c.kode, c.nama_rekening, e.rincian,
+        e.vol_1, e.satuan_1, 
+        
+        IFNULL(e.vol_2,"") vol_2, IFNULL(e.satuan_2,"") satuan_2, 
+        IFNULL(e.vol_3,"") vol_3, IFNULL(e.satuan_3,"") satuan_3,
+        IFNULL(e.vol_4,"") vol_4, IFNULL(e.satuan_4,"") satuan_4,
+        vol_1*IFNULL(vol_2,1)*IFNULL(vol_3,1)*IFNULL(vol_4,1) vol, 
+        
+        e.unit_cost, e.jumlah, IFNULL(rll.realisasi,0) realisasi_lalu, IFNULL(rl.realisasi,0) realisasi, 
+        e.jumlah-(IFNULL(rll.realisasi,0)+IFNULL(rl.realisasi,0)) sisa,
+        ifnull(ROUND((IFNULL(rll.realisasi,0)+IFNULL(rl.realisasi,0))/e.jumlah*100,2),0) persen
+        FROM dept_sub_activity_detail e
+        LEFT JOIN dept_sub_activity_data a ON a.id=e.dept_sub_activity_data_id
+        LEFT JOIN dept_sub_activity s ON s.id=a.dept_sub_activity_id
+        LEFT JOIN dept_activity v ON v.id=s.dept_activity_id
+        LEFT JOIN dept_program g ON g.id=v.dept_program_id
+        LEFT JOIN dept_period p ON p.id=a.dept_period_id
+        LEFT JOIN account c ON c.id=e.account_id
+        LEFT JOIN
+        (
+            SELECT d.dept_sub_activity_detail_id, SUM(d.jumlah) realisasi FROM dept_datareal d
+            WHERE MONTH(d.tanggal) >= "'.$b1.'" AND MONTH(d.tanggal) < "'.$b2.'" AND YEAR(d.tanggal) = "'.$session['deptPeriodValue'].'"
+            group BY d.dept_sub_activity_detail_id 
+        ) rl ON rl.dept_sub_activity_detail_id=e.id
+        LEFT JOIN
+        (
+            SELECT d.dept_sub_activity_detail_id, SUM(d.jumlah) realisasi FROM dept_datareal d
+            WHERE MONTH(d.tanggal) < "'.$b1.'" AND YEAR(d.tanggal) = "'.$session['deptPeriodValue'].'"
+            group BY d.dept_sub_activity_detail_id 
+        ) rll ON rll.dept_sub_activity_detail_id=e.id
+        WHERE p.unit_id="'.$unit_id.'" AND p.tahun="'.$session['deptPeriodValue'].'" AND g.bok_id="'.$bok_id.'"
+        ORDER BY g.id, s.id, v.id, a.id';
+
+        $session['qrypoa'] = $query;
+
+        $dataProvider = new SqlDataProvider([
+            'sql' => $query,
+            'pagination' => false
+        ]);
+
+        $model = $dataProvider->getModels();
+
+        $unit = Unit::findOne($unit_id);
+
+        return $this->render('datarealadm', [
+            'model' => $model,
+            'dataProvider' => $dataProvider,
+            'namaUnit' => $unit->puskesmas,
+            'id' => $bok_id,
+            'r' => $r,
+            'twprev' => $twprev,
+            'unit_id' => $unit_id,
+            'p' => $p
+        ]);
     }
 
     public function actionExportxlsdesk()
@@ -3056,7 +3211,8 @@ class DeptperiodController extends Controller
         CASE WHEN t.tw_4 = "4" THEN "Buka" ELSE "Kunci" END AS status_real_tw4,
         CASE WHEN t.tw_4 = "4" THEN "glyphicon glyphicon-lock" ELSE "glyphicon glyphicon-stats" END AS status_real_icon_tw4,
         CASE WHEN t.tw_4 = "4" THEN "btn btn-xs btn-danger custom_button" ELSE "btn btn-xs btn-success custom_button" END AS color_real_icon_tw4,
-        CASE WHEN t.tw_4 = "4" THEN "Buka" ELSE "Kunci" END AS label_real_icon_tw4
+        CASE WHEN t.tw_4 = "4" THEN "Buka" ELSE "Kunci" END AS label_real_icon_tw4,
+        aw.realisasi, CONCAT(IFNULL(ROUND((IFNULL(aw.realisasi,0))/aw.jumlah*100,2),0)," %") persen
         FROM unit u
         LEFT JOIN
         (
@@ -3072,10 +3228,16 @@ class DeptperiodController extends Controller
             WHEN cast(sum(IFNULL(e.jumlah,0))/IFNULL(p.pagu_ubah,0)*100 as decimal(10,2)) >= 33.33 AND 
             cast(sum(IFNULL(e.jumlah,0))/IFNULL(p.pagu_ubah,0)*100 as decimal(10,2)) <=99.99 THEN "active progress-striped"
             ELSE "bar"
-            END AS status_bar
+            END AS status_bar, SUM(IFNULL(rl.realisasi,0)) realisasi
             FROM dept_sub_activity_detail e
             LEFT JOIN dept_sub_activity_data a ON a.id=e.dept_sub_activity_data_id
             LEFT JOIN dept_period p ON p.id=a.dept_period_id
+            LEFT JOIN
+            (
+                SELECT d.dept_sub_activity_detail_id, SUM(d.jumlah) realisasi FROM dept_datareal d
+                WHERE YEAR(d.tanggal) = "2024"
+                group BY d.dept_sub_activity_detail_id 
+            ) rl ON rl.dept_sub_activity_detail_id=e.id
             WHERE p.tahun='.$period.'
             GROUP BY p.unit_id
         ) aw ON aw.unit_id=u.id
@@ -3271,10 +3433,55 @@ class DeptperiodController extends Controller
         return $this->redirect(array('list', 'period'=>$session['deptPeriodValue']));    
     }
 
-    public function actionRekapKomponenDetail($id)
+    public function actionRekapKomponenDetail($cond)
     {
         $session = Yii::$app->session;
-        $session['komponen'] = $id;
+        if($cond == 'def'){
+            unset($session['seksi']);
+            unset($session['deptprogram']);
+            unset($session['deptactivity']);
+            unset($session['deptsubactivity']);
+            $session['cond'] = $cond;
+            // $session['puskesmas'] = $_COOKIE['puskesmas'];
+            $session['deptprogram'] = 0;
+            // $session['komponen'] = 0;
+            if(Yii::$app->user->identity->group_id == 'ADM'){
+                $session['seksi'] = 'XXXX';
+            }else{
+                $session['seksi'] = strtoupper(Yii::$app->user->identity->username);
+            }
+            $prog = 'LIKE "%%"';
+            $kom = 'LIKE "%%"';
+            $subkom = 'LIKE "%%"';
+        }else{
+            if(Yii::$app->user->identity->group_id == 'ADM'){
+                $session['seksi'] = $_COOKIE['seksi'];
+            }else{
+                $session['seksi'] = strtoupper(Yii::$app->user->identity->username);
+            }
+
+            $session['deptprogram'] = $_COOKIE['program'];
+            if($_COOKIE['program'] == 'Pilih Menu' OR $_COOKIE['program'] == ''){
+                $prog = 'LIKE "%%"';
+            }else{
+                $prog = '= '.$_COOKIE['program'];
+            }
+
+            $session['deptactivity'] = $_COOKIE['komponen'];
+            if($_COOKIE['komponen'] == 'Pilih Rincian' OR $_COOKIE['komponen'] == ''){
+                $kom = 'LIKE "%%"';
+            }else{
+                $kom = '= '.$_COOKIE['komponen'];
+            }
+
+            $session['deptsubactivity'] = $_COOKIE['subkomponen'];
+            if($_COOKIE['subkomponen'] == 'Pilih Komponen' OR $_COOKIE['subkomponen'] == ''){
+                $subkom = 'LIKE "%%"';
+            }else{
+                $subkom = '= '.$_COOKIE['subkomponen'];
+            }
+            $session['cond'] = $cond;
+        }
         
         $query = 'SELECT u.id, g.nama_program, s.nama_kegiatan, v.id id_sub, v.nama_sub_kegiatan, IFNULL(a.bentuk_kegiatan, v.nama_sub_kegiatan) bentuk_kegiatan, 
         a.indikator_hasil, a.target_hasil, a.indikator_keluaran, a.target_keluaran, c.kode,
@@ -3294,16 +3501,15 @@ class DeptperiodController extends Controller
         LEFT JOIN unit u ON u.id=p.unit_id
         LEFT JOIN dpa d ON d.id=a.dpa_id
         WHERE p.tahun="'.$session['deptPeriodValue'].'" 
-        AND g.id = "'.$id.'"
+        AND g.id '.$prog.'
+        AND s.id '.$kom.'
+        AND v.id '.$subkom.'
+        AND u.id LIKE "%'.$session['seksi'].'"
         ORDER BY g.id, s.id, v.id, a.id';
 
-        $session['qrydetail'] = $query;
+        // return $query;
 
-        $program = Deptprogram::findOne($id);
-        if(!empty($program)){
-            $session['namaProgram'] = $program->nama_program;
-            $session['programId'] = $id;
-        }
+        $session['qrydetail'] = $query;
 
         $dataProvider = new SqlDataProvider([
             'sql' => $query,
@@ -3321,14 +3527,67 @@ class DeptperiodController extends Controller
         // return $session['qrydetail'];
     }
 
+    public function actionGetService($id)
+    {
+        $session = Yii::$app->session;
+        $session['deptprogram'] = $id;
+        $countActivity = Deptactivity::find()
+        ->where(['dept_program_id' => $id])
+        ->count();
+        
+        $posts = Deptactivity::find()
+        ->where(['dept_program_id' => $id])
+        // ->orderBy('nama_kegiatan ASC')
+        ->all();
+        
+        if($countActivity>0){
+            echo "<option>Pilih Rincian</option>";
+            foreach($posts as $post){
+            echo "<option value='".$post->id."'>".$post->nama_kegiatan."</option>";
+            }
+        }
+        else{
+            echo "<option>Pilih Rincian</option>";
+        }
+    }
+
+    public function actionGetActivity($id)
+    {
+        $session = Yii::$app->session;
+        $session['deptactivity'] = $id;
+
+        $countActivity = Deptsubactivity::find()
+        ->where(['dept_activity_id' => $id])
+        ->count();
+        
+        $posts = Deptsubactivity::find()
+        ->where(['dept_activity_id' => $id])
+        // ->orderBy('nama_kegiatan ASC')
+        ->all();
+        
+        if($countActivity>0){
+            echo "<option>Pilih Komponen</option>";
+            foreach($posts as $post){
+            echo "<option value='".$post->id."'>".$post->nama_sub_kegiatan."</option>";
+            }
+        }
+        else{
+            echo "<option>Pilih Komponen</option>";
+        }
+    }
+
     public function actionExportxlskomponen()
     {
         $session = Yii::$app->session;
         $period = $session['deptPeriodValue'];
 
-        Yii::$app->db->createCommand('DELETE FROM export_program WHERE username=:username AND period=:periodValue ')
+        // Yii::$app->db->createCommand('DELETE FROM export_program WHERE username=:username AND period=:periodValue ')
+        // ->bindValue(':username', Yii::$app->user->identity->unit_id)
+        // ->bindValue(':periodValue', $period)
+        // ->execute();
+
+        Yii::$app->db->createCommand('DELETE FROM export_program WHERE username=:username')
         ->bindValue(':username', Yii::$app->user->identity->unit_id)
-        ->bindValue(':periodValue', $period)
         ->execute();
 
         $data = Yii::$app->db->createCommand($session['qrydetail'])
@@ -3375,6 +3634,7 @@ class DeptperiodController extends Controller
             //     $exportprogram->nama_pelayanan=$row['nama_pelayanan']; $komponen = $row['nama_pelayanan'];
             // }
             $exportprogram->nama_pelayanan=$row['nama_kegiatan'];
+            $exportprogram->sub_kegiatan=$row['nama_sub_kegiatan'];
             
 
             // if ($kegiatan !== $row['nama_kegiatan']) {
@@ -3420,7 +3680,7 @@ class DeptperiodController extends Controller
         ->bindValue(':username', Yii::$app->user->identity->unit_id)
         ->queryAll();
 
-        $inputFileName = Yii::getAlias('@app/views/exportaccount').'/_export_komponen_dinas.xlsx';
+        $inputFileName = Yii::getAlias('@app/views/exportaccount').'/_export_komponen.xlsx';
 
         /** Load $inputFileName to a Spreadsheet Object  **/
         $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($inputFileName);
@@ -3491,6 +3751,8 @@ class DeptperiodController extends Controller
             $baseRowService = 0;
             $baseRow = $baseRowProgram+1;
             $namaPelayanan = '';
+            $namaKomponen = '';
+            $jmlkomponen = 0;
             
             if ($count > 0) {
                 foreach($dataExcel as $rowExcel) {
@@ -3555,6 +3817,22 @@ class DeptperiodController extends Controller
                     ->setCellValue('V'.$baseRow, $rowExcel['unit_cost'])
                     ->setCellValue('W'.$baseRow, $rowExcel['jumlah'])
                     ->setCellValue('X'.$baseRow, $rowExcel['jumlah_awal']);
+
+                    if($namaKomponen !== $rowExcel['sub_kegiatan']){
+                        $jmlkom = Yii::$app->db->createCommand('SELECT SUM(e.jumlah) total FROM export_program e
+                        where username=:username AND period=:periodValue and sub_kegiatan=:namaKegiatan')
+                        ->bindValue(':username', Yii::$app->user->identity->unit_id)
+                        ->bindValue(':periodValue', $period)
+                        ->bindValue(':namaKegiatan', $rowExcel['sub_kegiatan'])
+                        ->queryAll();
+
+                        foreach($jmlkom as $jml);
+
+                        $activeSheet->setCellValue('X'.$baseRow, $jml['total']);
+                        $spreadsheet->getActiveSheet()->getStyle('X' .$baseRow)->applyFromArray($styleArrayHeader);
+                    }
+
+                    $namaKomponen = $rowExcel['sub_kegiatan'];
 
                     $spreadsheet->getActiveSheet()->getStyle('A'.$baseRow. ':X' .$baseRow)->applyFromArray($styleArray);
                     $spreadsheet->getActiveSheet()->getStyle('A'.$baseRow. ':X' .$baseRow)->applyFromArray($styleArray)->getAlignment()->setVertical('top'); 
@@ -4832,13 +5110,13 @@ class DeptperiodController extends Controller
 
     public function actionDetailpoaadm($p,$unit_id,$sd)
     {
-        $POST_VARIABLE=Yii::$app->request->post('Deptperiod');
-        $period = $POST_VARIABLE['tahun'];
-
         $session = Yii::$app->session;
         if(!isset($period)){
             $period = $session['deptPeriodValue'];
         }else{
+            $POST_VARIABLE=Yii::$app->request->post('Deptperiod');
+            $period = $POST_VARIABLE['tahun'];
+
             $session['deptPeriodValue'] = $period;
         }
 

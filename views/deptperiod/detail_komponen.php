@@ -6,14 +6,26 @@ use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\web\Session;
 use app\models\Deptprogram;
+use app\models\Deptactivity;
+use app\models\Deptsubactivity;
+use app\models\Unit;
 use yii\helpers\ArrayHelper;
-use yii\widgets\Pjax;
+// use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ProgramSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $session = Yii::$app->session;
+
+if(Yii::$app->user->identity->group_id == 'SEK'){
+    $disabled = true;
+    unset($session['seksi']);
+    $session['seksi'] = strtoupper(Yii::$app->user->identity->username);
+}else{
+    $disabled = false;
+}
+
 $this->title = 'Detail per Komponen';
 if (Yii::$app->user->identity->unit_id == 'DINKES'){
     $this->params['breadcrumbs'][] = ['label' => 'Data POA '.$session['deptPeriodValue'], 'url' => ['deptperiod/list', 'period' => $session['deptPeriodValue']]];
@@ -25,6 +37,108 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <h1></h1>
 <p>
+<div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">Filter Data</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <p>
+                    <div class="col-sm-3">
+                        <?= Html::dropDownList('seksi', null, ArrayHelper::map(Unit::find()->where(['IS', 'kecamatan', NULL])->orderBy('puskesmas')->all(),'id','puskesmas' ),
+                            [
+                                'id' => 'seksi',
+                                'options'=>[$session['seksi']=>['Selected'=>true]],
+                                'prompt'=>'Pilih Seksi',
+                                'class'=>'form-control',
+                                'disabled' => $disabled
+                            ]);
+                        ?>  
+                    </div>
+                </p>
+            </div>
+            <div class="row">
+                <p>
+                    <div class="col-sm-10">
+                        <?= Html::dropDownList('program', null, ArrayHelper::map(Deptprogram::find()
+                                            ->select('dept_program.*')
+                                            ->where(['dept_program.tahun' => $session['deptPeriodValue'], 'dept_program.aktif' => 1])
+                                            ->all(),'id','nama_program' ),
+                            [
+                                'id' => 'program',
+                                'options'=>[$session['deptprogram']=>['Selected'=>true]],
+                                'prompt'=>'Pilih Menu',
+                                'onchange'=>'$.post( "'.Yii::$app->urlManager->createUrl('deptperiod/get-service?id=').'"+$(this).val(), 
+                                            function( data ) {
+                                                // alert(data);
+                                                $( "select#komponen" ).html( data );
+                                                $( "select#subkomponen" ).empty();
+                                                $( "select#subkomponen" ).append("<option>Pilih Komponen</option>");
+                                            });', 
+                                'class'=>'form-control'
+                            ]);
+                        ?>  
+                    </div>
+                </p>
+            </div>
+            <div class="row">
+                <p>
+                    <div class="col-sm-10">
+                    <?= Html::dropDownList('komponen', null, ArrayHelper::map(Deptactivity::find()->where(['dept_program_id' => $session['deptprogram']])->all(),'id','nama_kegiatan' ),
+                        [
+                            'id' => 'komponen',
+                            'options'=>[$session['deptactivity']=>['Selected'=>true]],
+                            'prompt'=>'Pilih Rincian',
+                            'onchange'=>'$.post( "'.Yii::$app->urlManager->createUrl('deptperiod/get-activity?id=').'"+$(this).val(), 
+                                        function( data ) {
+                                            // alert(data);
+                                            $( "select#subkomponen" ).html( data );
+                                        });', 
+                            'class'=>'form-control'
+                        ]);
+                    ?>  
+                    </div>
+                </p>
+            </div>
+            <div class="row">
+                <p>
+                    <div class="col-sm-10">
+                        <?php if(isset($session['deptactivity'])){?>
+                            <?= Html::dropDownList('subkomponen', null, ArrayHelper::map(Deptsubactivity::find()->where(['dept_activity_id' => $session['deptactivity']])->all(),'id','nama_sub_kegiatan' ),
+                                [
+                                    'id' => 'subkomponen',
+                                    'options'=>[$session['deptsubactivity']=>['Selected'=>true]],
+                                    'prompt'=>'Pilih Komponen',
+                                    'class'=>'form-control'
+                                ]);
+                            ?>  
+                        <?php }else{ ?>
+                            <?= Html::dropDownList('subkomponen', null, [],
+                                [
+                                    'id' => 'subkomponen',
+                                    'prompt'=>'Pilih Komponen',
+                                    'class'=>'form-control'
+                                ]);
+                            ?>  
+                        <?php } ?>
+                    </div>
+                </p>
+                <p>
+                    <div class="col-lg-1 pull-right">
+                        <?= Html::a('<span class="glyphicon glyphicon-filter"></span> Proses', ['rekap-komponen-detail', 'cond' => 'fltr'], ['class' => 'btn btn-primary pull-right', 
+                        'id' => 'proses',
+                        'onchange'=>'
+                            $.pjax.reload({
+                                container: "#detail",
+                                timeout: false,
+                            });'
+                        ]) ?>
+                    </div>
+                </p>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-sm-1">
             <?php if(Yii::$app->user->identity->username == 'admin'){ //$session['poaLabel'] == ' Awal' && ?> 
@@ -37,27 +151,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= Html::a('<span class="glyphicon glyphicon-export"></span> Export', ['exportxlsubah'], ['title' => 'Export Excel', 'class' => 'btn btn-default']) ?>
             <?php } ?>
         </div>
-        <div class="col-sm-11">
-            <?= Html::dropDownList('komponen', null, ArrayHelper::map(Deptprogram::find()->where(['dept_program.tahun' => $session['deptPeriodValue'], 'dept_program.aktif' => 1])
-                ->all(),'id','nama_program' ),
-                [
-                    'options'=>[$session['komponen']=>['Selected'=>true]],
-                    // 'style' => 'margin-top:5px !important;', 
-                    'prompt'=>'Pilih Menu Kegiatan',
-                    'onchange'=>'
-                        $.pjax.reload({
-                            url: "'.Url::to(['rekap-komponen-detail']).'?id="+$(this).val(),
-                            container: "#pjax-gridview",
-                            timeout: 1000,
-                        });',
-                    'class'=>'form-control'
-                ]);
-            ?>  
-        </div>
     </div>
 </p>
 
-<?php Pjax::begin(['id' => 'pjax-gridview']) ?>
+<?php //Pjax::begin(['id' => 'pjax-gridview']) ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         // 'filterModel' => $searchModel,
@@ -65,7 +162,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'id' => 'GridView',
         'showPageSummary' => true,
         'pageSummaryRowOptions' => ['class' => 'kv-page-summary success', 'style' => 'text-align:right'],
-        'pjax' => true,
+        // 'pjax' => true,
         'striped' => true,
         'hover' => false,
         'panel' => ['type' => 'primary', 'heading' => 'Data POA ' .$session['poaLabel']],
@@ -283,52 +380,36 @@ $this->params['breadcrumbs'][] = $this->title;
             // ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
-<?php Pjax::end() ?>
+<?php //Pjax::end() ?>
 
 <?php
-    // You only need add this,
-    // $this->registerJs('
-    //     var gridview_id = ""; // specific gridview
-    //     var columns = [1,2,3]; // index column that will grouping, start 1
- 
-    //     /*
-    //     DON\'T EDIT HERE
- 
-    //     http://www.hafidmukhlasin.com
- 
-    //     */
-    //     var column_data = [];
-    //         column_start = [];
-    //         rowspan = [];
- 
-    //     for (var i = 0; i < columns.length; i++) {
-    //         column = columns[i];
-    //         column_data[column] = "";
-    //         column_start[column] = null;
-    //         rowspan[column] = 1;
-    //     }
- 
-    //     var row = 1;
-    //     $(gridview_id+" table > tbody  > tr").each(function() {
-    //         var col = 1;
-    //         $(this).find("td").each(function(){
-    //             for (var i = 0; i < columns.length; i++) {
-    //                 if(col==columns[i]){
-    //                     if(column_data[columns[i]] == $(this).html()){
-    //                         $(this).remove();
-    //                         rowspan[columns[i]]++;
-    //                         $(column_start[columns[i]]).attr("rowspan",rowspan[columns[i]]);
-    //                     }
-    //                     else{
-    //                         column_data[columns[i]] = $(this).html();
-    //                         rowspan[columns[i]] = 1;
-    //                         column_start[columns[i]] = $(this);
-    //                     }
-    //                 }
-    //             }
-    //             col++;
-    //         })
-    //         row++;
-    //     });
-    // ');
+    $js=<<< JS
+    $("#proses").on("click", function (e) {
+        createCookie("seksi",document.getElementById("seksi").value, "1");
+        createCookie("program",document.getElementById("program").value, "1");
+        createCookie("komponen",document.getElementById("komponen").value, "1");
+        createCookie("subkomponen",document.getElementById("subkomponen").value, "1");
+        baseUrl = window.origin;
+        var link = baseUrl+"'.Url::to(['rekap-komponen-detail']).'";
+        $.get(link);
+        // Function to create the cookie 
+        function createCookie(name, value, days) { 
+            var expires; 
+            
+            if (days) { 
+                var date = new Date(); 
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000)); 
+                expires = "; expires=" + date.toGMTString(); 
+            } 
+            else { 
+                expires = ""; 
+            } 
+            
+            document.cookie = escape(name) + "=" +  
+                escape(value) + expires + "; path=/"; 
+        } 
+    });
+JS;
+$this->registerJs($js, yii\web\View::POS_READY);
+// $this->registerJs($js, yii\web\View::POS_HEAD);
 ?>
