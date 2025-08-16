@@ -376,6 +376,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Sub Kegiatan DPA',
                 'contentOptions' => ['style' => 'font-size:11px;']
             ],
+            [
+                'attribute' => 'puskesmas',
+                'label' => 'Seksi',
+                'contentOptions' => ['style' => 'font-size:11px;width: 5%;']
+            ],
 
             // ['class' => 'yii\grid\ActionColumn'],
         ],

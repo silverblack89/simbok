@@ -3490,7 +3490,7 @@ class DeptperiodController extends Controller
         IFNULL(e.vol_3,"") vol_3, IFNULL(e.satuan_3,"") satuan_3,
         IFNULL(e.vol_4,"") vol_4, IFNULL(e.satuan_4,"") satuan_4,
         vol_1*IFNULL(vol_2,1)*IFNULL(vol_3,1)*IFNULL(vol_4,1) vol, 
-        e.unit_cost, e.jumlah, d.nama sub_dpa
+        e.unit_cost, e.jumlah, d.nama sub_dpa, u.puskesmas
         FROM dept_sub_activity_detail e
         LEFT JOIN dept_sub_activity_data a ON a.id=e.dept_sub_activity_data_id
         LEFT JOIN dept_sub_activity v ON v.id=a.dept_sub_activity_id
