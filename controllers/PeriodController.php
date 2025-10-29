@@ -5070,8 +5070,8 @@ class PeriodController extends Controller
             $session['menu_kegiatan'] = '';
         }
 
-        $query = 'SELECT e.id, g.nama_program, s.nama_pelayanan, v.id act_id, v.nama_kegiatan,  IFNULL(a.bentuk_kegiatan, v.nama_kegiatan) bentuk_kegiatan, 
-        a.sasaran, a.target, a.lokasi, a.pelaksana, c.kode,
+        $query = 'SELECT e.id, g.nama_program, s.nama_pelayanan, v.id act_id, v.nama_kegiatan, a.id bentuk_id, IFNULL(a.bentuk_kegiatan, v.nama_kegiatan) bentuk_kegiatan, 
+        a.sasaran, a.target, a.satuan, a.lokasi, a.pelaksana, c.kode,
         c.nama_rekening, e.rincian, e.vol_1, e.satuan_1, 
         IFNULL(e.vol_2,"") vol_2, IFNULL(e.satuan_2,"") satuan_2, 
         IFNULL(e.vol_3,"") vol_3, IFNULL(e.satuan_3,"") satuan_3,
@@ -5120,6 +5120,205 @@ class PeriodController extends Controller
         ]);
     }
 
+    public function actionExportxlskrisna()
+    {
+        $session = Yii::$app->session;
+        $period = $session['periodValue'];
+
+        if(Yii::$app->user->identity->username == 'admin'){
+            $namapkm = 'Puskesmas '.$session['namaPkm'];
+        }else{
+            $namapkm = Yii::$app->user->identity->alias;
+        }
+
+        Yii::$app->db->createCommand('DELETE FROM export_program WHERE username=:username') //AND period=:periodValue 
+        ->bindValue(':username', Yii::$app->user->identity->unit_id)
+        // ->bindValue(':periodValue', $period)
+        ->execute();
+
+        $data = Yii::$app->db->createCommand($session['qrypoa'])
+        ->queryAll();
+
+        $program = '';
+        $komponen = '';
+        $kegiatan = '';
+        $bentuk = '';
+        $sasaran = '';
+        foreach ($data as $row) {
+            $exportprogram =  new Exportprogram();
+
+            if ($program !== $row['nama_program']) {
+                $exportprogram->unit=Yii::$app->user->identity->unit_id; $program = $row['nama_program'];
+                $exportprogram->nama_program=$row['nama_program'];
+                
+                $kegiatan = '';
+                if ($kegiatan !== $row['nama_kegiatan']) {
+                    $exportprogram->nama_kegiatan=$row['nama_kegiatan']; $kegiatan = $row['nama_kegiatan'];
+
+                    $bentuk = '';
+                    if ($bentuk !== $row['bentuk_kegiatan']) {
+                        $exportprogram->bentuk_kegiatan=$row['bentuk_kegiatan']; $bentuk = $row['bentuk_kegiatan'];
+                    }
+                }
+            }else{
+                $exportprogram->unit=Yii::$app->user->identity->unit_id; $pkm = $row['nama_program'];
+
+                if ($kegiatan !== $row['nama_kegiatan']) {
+                    $exportprogram->nama_kegiatan=$row['nama_kegiatan']; $kegiatan = $row['nama_kegiatan'];
+                    $bentuk = '';
+                    if ($bentuk !== $row['bentuk_kegiatan']) {
+                        $exportprogram->bentuk_kegiatan=$row['bentuk_kegiatan']; $bentuk = $row['bentuk_kegiatan'];
+                    }
+                }else{
+                    if ($bentuk !== $row['bentuk_kegiatan']) {
+                        $exportprogram->bentuk_kegiatan=$row['bentuk_kegiatan']; $bentuk = $row['bentuk_kegiatan'];
+                    }
+                }
+            }
+   
+            $exportprogram->nama_program=$row['nama_program'];
+
+            $exportprogram->nama_pelayanan=$row['nama_pelayanan'];
+
+            if ($sasaran !== $row['bentuk_id']) {
+                $exportprogram->sasaran=$row['sasaran'];
+                $exportprogram->target=$row['target'];
+                $exportprogram->satuan=$row['satuan'];
+                $exportprogram->lokasi=$row['lokasi'];
+                $exportprogram->pelaksana=$row['pelaksana'];
+                $sasaran = $row['bentuk_id'];
+            }
+
+            $exportprogram->rek=$row['kode'];
+            $exportprogram->nama_rekening=$row['nama_rekening'];
+            $exportprogram->rincian=$row['rincian'];
+
+            $exportprogram->vol_1=$row['vol_1'];
+            $exportprogram->satuan_1=$row['satuan_1'];
+            $exportprogram->vol_2=$row['vol_2'];
+            $exportprogram->satuan_2=$row['satuan_2'];
+
+            $exportprogram->vol_3=$row['vol_3'];
+            $exportprogram->satuan_3=$row['satuan_3'];
+            $exportprogram->vol_4=$row['vol_4'];
+            $exportprogram->satuan_4=$row['satuan_4'];
+
+            $exportprogram->vol=$row['vol'];
+            $exportprogram->unit_cost=$row['unit_cost'];
+            $exportprogram->jumlah=$row['jumlah'];
+            $exportprogram->username=Yii::$app->user->identity->unit_id;
+            $exportprogram->period=$period;
+            $exportprogram->save();
+        }
+
+        $dataprogram = Yii::$app->db->createCommand('SELECT e.nama_program, SUM(e.jumlah) total FROM export_program e
+        WHERE e.username=:username
+        group BY e.nama_program ORDER BY e.id')
+        // ->bindValue(':tahun', $period)
+        ->bindValue(':username', Yii::$app->user->identity->unit_id)
+        ->queryAll();
+
+        $inputFileName = Yii::getAlias('@app/views/exportaccount').'/_export_krisna.xlsx';
+
+        /** Load $inputFileName to a Spreadsheet Object  **/
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($inputFileName);
+        // $spreadsheet = new Spreadsheet();
+        $activeSheet = $spreadsheet->getActiveSheet();
+
+        $styleArrayBold = [
+            'font' => [
+                'bold' => true,
+            ],
+        ];
+
+        $baseRowProgram = 6;
+        $baseRow = 0;
+
+        $styleArray = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ];
+
+        $styleArrayHeader = [
+            'font' => [
+                'bold' => true,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ];
+
+        $activeSheet->setCellValue('D'.$baseRowProgram, 'BOK PUSKESMAS');
+        $baseRowProgram = $baseRowProgram+1;
+
+        foreach ($dataprogram as $dataprogram) {
+            $activeSheet->setCellValue('A'.$baseRowProgram, '') 
+            ->setCellValue('D'.$baseRowProgram, $dataprogram['nama_program'])
+            ->setCellValue('Q'.$baseRowProgram, $dataprogram['total']);
+
+            $dataExcel = Yii::$app->db->createCommand('SELECT e.* FROM export_program e
+            where e.nama_program=:namaprogram AND username=:username AND period=:periodValue order by e.id')
+            ->bindValue(':namaprogram', $dataprogram['nama_program'])
+            ->bindValue(':username', Yii::$app->user->identity->unit_id)
+            ->bindValue(':periodValue', $period)
+            ->queryAll();
+
+            $count = count($dataExcel);
+
+            $spreadsheet->getActiveSheet()->mergeCells('D'.$baseRowProgram. ':P' .$baseRowProgram);
+            $spreadsheet->getActiveSheet()->getStyle('A'.$baseRowProgram. ':R' .$baseRowProgram)->applyFromArray($styleArrayHeader);
+            $activeSheet->getStyle('A'.$baseRowProgram. ':R' .$baseRowProgram)->getFill()
+            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()->setARGB('9BC2E6');
+                 
+            $baseRow = $baseRowProgram+1;
+            
+            if ($count > 0) {
+                foreach($dataExcel as $rowExcel) {
+                    $activeSheet->setCellValue('A'.$baseRow, '')
+                    ->setCellValue('B'.$baseRow, '')
+                    ->setCellValue('D'.$baseRow, $rowExcel['nama_kegiatan'])
+                    ->setCellValue('E'.$baseRow, $rowExcel['target'])
+                    ->setCellValue('F'.$baseRow, $rowExcel['satuan'])
+                    ->setCellValue('G'.$baseRow, $rowExcel['rincian'])
+                    ->setCellValue('H'.$baseRow, $rowExcel['vol_1'])
+                    ->setCellValue('I'.$baseRow, $rowExcel['satuan_1'])
+                    ->setCellValue('J'.$baseRow, $rowExcel['vol_2'])
+                    ->setCellValue('K'.$baseRow, $rowExcel['satuan_2'])
+                    ->setCellValue('L'.$baseRow, $rowExcel['vol_3'])
+                    ->setCellValue('M'.$baseRow, $rowExcel['satuan_3'])
+                    ->setCellValue('N'.$baseRow, $rowExcel['vol_4'])
+                    ->setCellValue('O'.$baseRow, $rowExcel['satuan_4'])
+                    ->setCellValue('P'.$baseRow, $rowExcel['unit_cost'])
+                    ->setCellValue('Q'.$baseRow, $rowExcel['jumlah']);
+
+                    $spreadsheet->getActiveSheet()->getStyle('A'.$baseRow. ':R' .$baseRow)->applyFromArray($styleArray);
+                    $spreadsheet->getActiveSheet()->getStyle('A'.$baseRow. ':R' .$baseRow)->applyFromArray($styleArray)->getAlignment()->setVertical('top'); 
+                    $spreadsheet->getActiveSheet()->getStyle('A'.$baseRow. ':R' .$baseRow)->applyFromArray($styleArray)->getAlignment()->setWrapText(true);
+                                            
+                    $baseRow++;
+                }
+                $baseRowProgram = $baseRow+1; 
+            }
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+        $filename = 'export_poa_krisna_'.str_replace(' ','_',strtolower($namapkm)).'_'.$period.'.xlsx';
+
+        header('Content-Description: File Transfer');   
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.$filename.'"');
+        header('Cache-Control: max-age=0');
+        $writer->save('php://output');
+        exit;
+    }
+
     public function actionDatapoaadm($id,$p)
     {
         $session = Yii::$app->session;
@@ -5146,8 +5345,8 @@ class PeriodController extends Controller
             $session['menu_kegiatan'] = '';
         }
 
-        $query = 'SELECT e.id, g.nama_program, s.nama_pelayanan, v.id act_id, v.nama_kegiatan,  IFNULL(a.bentuk_kegiatan, v.nama_kegiatan) bentuk_kegiatan, 
-        a.sasaran, a.target, a.lokasi, a.pelaksana, c.kode,
+        $query = 'SELECT e.id, g.nama_program, s.nama_pelayanan, v.id act_id, v.nama_kegiatan, a.id bentuk_id, IFNULL(a.bentuk_kegiatan, v.nama_kegiatan) bentuk_kegiatan, 
+        a.sasaran, a.target, a.satuan, a.lokasi, a.pelaksana, c.kode,
         c.nama_rekening, e.rincian, e.vol_1, e.satuan_1, 
         IFNULL(e.vol_2,"") vol_2, IFNULL(e.satuan_2,"") satuan_2, 
         IFNULL(e.vol_3,"") vol_3, IFNULL(e.satuan_3,"") satuan_3,

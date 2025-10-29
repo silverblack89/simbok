@@ -62,10 +62,12 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php }else{ ?>
             <?= Html::a('<span class="glyphicon glyphicon-export"></span> Export', ['exportxls'], ['title' => 'Export Excel', 'class' => 'btn btn-default']) ?>
             <?= Html::a('<span class="glyphicon glyphicon-export"></span> Export Desk', ['exportxlsdesk'], ['title' => 'Export Excel Desk', 'class' => 'btn btn-success']) ?>
+            <?= Html::a('<span class="glyphicon glyphicon-export"></span> Export Krisna', ['exportxlskrisna'], ['title' => 'Export Excel Desk', 'class' => 'btn btn-danger']) ?>
         <?php } ?>
     <?php }else{ ?>
         <?= Html::a('<span class="glyphicon glyphicon-export"></span> Export', ['exportxlsadm', 'unit_id' => $id], ['title' => 'Export Excel', 'class' => 'btn btn-default']) ?>
         <?= Html::a('<span class="glyphicon glyphicon-export"></span> Export Desk', ['exportxlsdesk'], ['title' => 'Export Excel Desk', 'class' => 'btn btn-success']) ?>
+        <?= Html::a('<span class="glyphicon glyphicon-export"></span> Export Krisna', ['exportxlskrisna'], ['title' => 'Export Excel Desk', 'class' => 'btn btn-danger']) ?>
     <?php } ?>
 
     <?php if($session['poaLabel'] == ' Perubahan' && Yii::$app->user->identity->username !== 'admin'){ ?>

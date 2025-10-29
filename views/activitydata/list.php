@@ -118,10 +118,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 'enableSorting' => false,
                 // 'contentOptions' => ['class' => 'col-lg-1 text-right'],
             ],
-            // 'target',
+
             [
                 'label' => 'Target',
                 'attribute' =>'target',
+                'enableSorting' => false,
+                // 'contentOptions' => ['class' => 'col-lg-1 text-right'],
+            ],
+
+            [
+                'label' => 'Satuan',
+                'attribute' =>'satuan',
                 'enableSorting' => false,
                 // 'contentOptions' => ['class' => 'col-lg-1 text-right'],
             ],

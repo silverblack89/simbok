@@ -55,7 +55,7 @@ class Exportprogram extends \yii\db\ActiveRecord
         return [
             [['vol_1', 'vol_2', 'unit_cost', 'vol_1_awal', 'vol_2_awal', 'unit_cost_awal'], 'integer'],
             [['vol', 'jumlah', 'vol_awal', 'jumlah_awal'], 'number'],
-            [['unit', 'nama_rekening', 'sasaran', 'target', 'lokasi', 'pelaksana'], 'string', 'max' => 255],
+            [['unit', 'nama_rekening', 'sasaran', 'satuan', 'target', 'lokasi', 'pelaksana'], 'string', 'max' => 255],
             [['nama_program', 'nama_pelayanan', 'nama_kegiatan', 'bentuk_kegiatan'], 'string'],
             [['satuan_1', 'satuan_2', 'satuan_1_awal', 'satuan_2_awal'], 'string', 'max' => 50],
             [['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'agu', 'sep', 'okt', 'nov', 'des'], 'string', 'max' => 1],
@@ -77,6 +77,7 @@ class Exportprogram extends \yii\db\ActiveRecord
             'bentuk_kegiatan' => 'Bentuk Kegiatan',
             'sasaran' => 'Sasaran',
             'target' => 'Target',
+            'satuan' => 'Satuan',
             'lokasi' => 'Lokasi',
             'pelaksana' => 'Pelaksana',
             'nama_rekening' => 'Nama Rekening',

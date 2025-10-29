@@ -8,6 +8,7 @@ use yii\bootstrap\Button;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 use app\models\Activitydatasub;
+use app\models\Satuan;
 
 $session = Yii::$app->session;
 
@@ -104,7 +105,23 @@ if($session['status_poa']=='disabled'){
 
                 <?= $form->field($model, 'sasaran')->textInput(['maxlength' => true, 'disabled' => $disabled]) ?>
 
-                <?= $form->field($model, 'target')->textInput(['maxlength' => true, 'disabled' => $disabled]) ?>
+                <div class="row">
+                    <div class="col-sm-7">
+                    <?= $form->field($model, 'target')->textInput(['maxlength' => true])->widget(\yii\widgets\MaskedInput::className(), [
+                        'options' => ['disabled' => $disabled],
+                        'clientOptions' => [
+                        'alias' => 'decimal',
+                        'groupSeparator' => '.',
+                        'radixPoint' => ',',
+                        'autoGroup' => true
+                    ]]); ?>
+                    </div>
+                    <div class="col-sm-5">
+                        <?= $form->field($model, 'satuan')->dropDownList( ArrayHelper::map(Satuan::find()->orderBy('nama')->all(),'nama','nama'),['prompt'=>'Pilih', 'disabled' => $disabled])->label('Satuan') ?>
+                    </div>
+                </div>
+                
+                <!-- <?= $form->field($model, 'target')->textInput(['maxlength' => true, 'disabled' => $disabled]) ?> -->
 
                 <?= $form->field($model, 'lokasi')->textInput(['maxlength' => true, 'disabled' => $disabled]) ?>
 

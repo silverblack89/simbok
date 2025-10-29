@@ -38,7 +38,7 @@ class Activitydata extends \yii\db\ActiveRecord
             [['activity_id', 'period_id', 'bentuk_kegiatan', 'activity_data_sub_id'], 'required'],
             [['activity_id', 'period_id', 'activity_data_sub_id'], 'integer'],
             [['bentuk_kegiatan'], 'string', 'max' => 100],
-            [['sasaran', 'target', 'lokasi', 'pelaksana'], 'string', 'max' => 50],
+            [['sasaran', 'target', 'satuan', 'lokasi', 'pelaksana'], 'string', 'max' => 50],
             [['programId', 'serviceId', 'activityId'], 'string'],
         ];
     }
@@ -56,6 +56,7 @@ class Activitydata extends \yii\db\ActiveRecord
             'bentuk_kegiatan' => 'Bentuk Kegiatan',
             'sasaran' => 'Sasaran',
             'target' => 'Target',
+            'satuan' => 'Satuan',
             'lokasi' => 'Lokasi',
             'pelaksana' => 'Pelaksana',
         ];

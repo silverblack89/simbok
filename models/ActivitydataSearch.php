@@ -18,7 +18,7 @@ class ActivitydataSearch extends Activitydata
     {
         return [
             [['id', 'activity_id', 'period_id'], 'integer'],
-            [['bentuk_kegiatan', 'sasaran', 'target', 'lokasi', 'pelaksana'], 'safe'],
+            [['bentuk_kegiatan', 'sasaran', 'target', 'satuan', 'lokasi', 'pelaksana'], 'safe'],
         ];
     }
 
@@ -66,6 +66,7 @@ class ActivitydataSearch extends Activitydata
         $query->andFilterWhere(['like', 'bentuk_kegiatan', $this->bentuk_kegiatan])
             ->andFilterWhere(['like', 'sasaran', $this->sasaran])
             ->andFilterWhere(['like', 'target', $this->target])
+            ->andFilterWhere(['like', 'satuan', $this->satuan])
             ->andFilterWhere(['like', 'lokasi', $this->lokasi])
             ->andFilterWhere(['like', 'pelaksana', $this->pelaksana]);
 
